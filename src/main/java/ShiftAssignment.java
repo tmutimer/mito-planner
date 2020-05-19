@@ -2,22 +2,24 @@ import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 /**
- * Shift Assignment objects will be assigned to Persons during Planning.
+ * Planning entity class. ShiftAssignments are linked to Tasks during planning.
  * There are as many ShiftAssignment instances per Shift instance as the Floor capacity.
+ * Before planning, the task links are null, but the shift links are populated.
  */
 @PlanningEntity
 public class ShiftAssignment {
-    private Person mPerson;
+
     private Shift mShift;
 
-    // The PlanningVariable annotation shares "taskList" with the
-    // annotation of the function providing the list of Tasks
-    @PlanningVariable(valueRangeProviderRefs = {"taskList"})
-    public Person getPerson() {
-        return mPerson;
+    // Planning variable: changes during planning, between score calculations.
+    private Task mTask;
+
+    @PlanningVariable(valueRangeProviderRefs = {"taskList"}, nullable = true)
+    public Task getTask() {
+        return mTask;
     }
 
-    public void setPerson(Person person) {
-        mPerson = person;
+    public void setTask(Task task) {
+        mTask = task;
     }
 }
