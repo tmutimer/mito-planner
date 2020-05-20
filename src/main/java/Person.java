@@ -8,7 +8,14 @@ public class Person {
     private final String mName;
     private final Room mOffice;
     // TODO this may need to be implemented as a constraint elsewhere as per end of 4.3.3.1
-    private int mWeeklyShiftLimit;
+    private final int mWeeklyShiftLimit;
+
+    public Person(int id, String name, Room office, int weeklyShiftLimit) {
+        mId = id;
+        mName = name;
+        mOffice = office;
+        mWeeklyShiftLimit = weeklyShiftLimit;
+    }
 
     public Room getOffice() {
         return mOffice;
