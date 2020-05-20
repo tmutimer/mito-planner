@@ -4,10 +4,9 @@
 
 // TODO consider implementing Serializable on all problem fact classes
 public class Person {
-    private int mId;
-    private String mName;
-    private Room mOffice;
-
+    private final int mId;
+    private final String mName;
+    private final Room mOffice;
     // TODO this may need to be implemented as a constraint elsewhere as per end of 4.3.3.1
     private int mWeeklyShiftLimit;
 

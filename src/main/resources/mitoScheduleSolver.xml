@@ -3,6 +3,12 @@
     <!-- Define the model -->
     <scanAnnotatedClasses/>
 
+    <!--  For testing purpose, make deterministic  -->
+    <randomSeed>0</randomSeed>
+
+    <!-- This can be switched on to detect common bugs, and there are other modes. -->
+    <!--    <environmentMode>FAST_ASSERT</environmentMode>-->
+
     <!-- Define the score function -->
     <scoreDirectorFactory>
 <!--        TODO this obviously is wrong-->

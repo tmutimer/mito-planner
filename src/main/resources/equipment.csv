@@ -1,0 +1,29 @@
+﻿Id,Name,Type,Location,Number
+1,Ion Torrent,Sequencer,M4.005,1
+2,Cell lines TC hood,Cell culture hood,M4.005A,1
+3,Primary TC hood,Cell culture hood,M4.029,1
+4,Lentiviral TC hood,Cell culture hood,M4.029A,1
+5,Stem cells TC hood,Cell culture hood,M4.057,1
+6,Incucyte,Incubator,M4.057,6
+7,PCR machine M4.021,Thermal cycler,M4.021,5
+8,UV hood M4.021,UV hood,M4.021,1
+9,UV hood M4.047,UV hood,M4.047,2
+10,Laser microscope,Microscope,M4.024C,1
+11,Old Zeiss,Microscope,M4.024C,1
+12,Step One real time machine,Thermal cycler,M4.021,2
+13,Biorad real time machine,Thermal cycler,M4.047,1
+14,Fluorescent microscope,Microscope,M4.027A,1
+15,Image analysis computer,Computer,M4.027A,1
+16,Inverted microscope,Microscope,M4.027,1
+17,Image analysis computer,Computer,M4.027,1
+18,bunsen burner,Bunsen burner,M4.040,1
+19,Single molecule UV hood,UV hood,M4.033P,1
+20,Stereology microscope,Microscope,M4.021,1
+21,Eppendorf Thermomixer,Heat Block,M4.021,1
+22,Microtome,Tissue cutter,M4.021,1
+23,Microtome,Tissue cutter,M4.033A,1
+24,B&Z cell culture hood,Cell culture hood,M4.007,1
+25,Gel electrophoresis M4.021,Work station,M4.021,1
+26,Gel electrophoresis M4.047,Work station,M4.047,1
+27,Fume Hood,Fume hood,M4.021,1
+28,Alcohol gradient,Work station,M4.021,1

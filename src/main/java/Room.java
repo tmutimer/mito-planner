@@ -4,9 +4,9 @@ import java.util.Objects;
  * Problem fact class. A room on the 4th floor. Includes both offices and lab rooms. Each has a capacity.
  */
 public class Room {
-    private int mId;
-    private String mRoomName;
-    private int mCapacity;
+    private final int mId;
+    private final String mRoomName;
+    private final int mCapacity;
 
     Room(int id, String name, int capacity) {
         mId = id;
