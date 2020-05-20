@@ -32,9 +32,10 @@ public class ScheduleProblem {
 
     // TODO implement Equipment
 
-    // TODO to improve performance, can calculate a 'Cached Problem Fact Collection' of which Tasks conflict,
+    // TODO to improve performance, can calculate a 'Cached Problem Fact Collection' of which Tasks definitely conflict,
     //   for example, any combination of Tasks done by the same person or Tasks which require use of
-    //   the same unique piece of equipment
+    //   the same unique piece of equipment. May need to have a second look at the issues with hard-coding
+    //   hard constraints (need to be broken to escape local optima).
 
     // This score allows for hard and soft constraints (no medium).
     @PlanningScore
