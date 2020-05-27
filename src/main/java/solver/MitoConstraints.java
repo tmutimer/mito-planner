@@ -26,4 +26,6 @@ public class MitoConstraints {
                 .filter(ShiftAssignment::isTaskAssignedAfterDueDate)
                 .penalize("Due date conflict", HardSoftScore.ONE_SOFT);
     }
+
+    
 }

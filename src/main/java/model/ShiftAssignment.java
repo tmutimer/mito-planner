@@ -31,6 +31,6 @@ public class ShiftAssignment {
         if (Objects.isNull(mTask.getDueDate())) {
             return false;
         }
-        return mShift.getDate() > mTask.getDueDate();
+        return mShift.getStartTime().after(mTask.getDueDate());
     }
 }
