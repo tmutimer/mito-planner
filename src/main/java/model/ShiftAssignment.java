@@ -1,9 +1,13 @@
+package model;
+
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
+import java.util.Objects;
+
 /**
  * Planning entity class. ShiftAssignments are linked to Tasks during planning.
- * There are as many ShiftAssignment instances per Shift instance as the Floor capacity.
+ * There are as many model.ShiftAssignment instances per model.Shift instance as the Floor capacity.
  * Before planning, the task links are null, but the shift links are populated.
  */
 @PlanningEntity
@@ -21,5 +25,12 @@ public class ShiftAssignment {
 
     public void setTask(Task task) {
         mTask = task;
+    }
+
+    public boolean isTaskAssignedAfterDueDate() {
+        if (Objects.isNull(mTask.getDueDate())) {
+            return false;
+        }
+        return mShift.getDate() > mTask.getDueDate();
     }
 }

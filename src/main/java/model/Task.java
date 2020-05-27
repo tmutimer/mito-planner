@@ -1,16 +1,18 @@
+package model;
+
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 
 /**
- * Problem fact class. Tasks include all their resource requirements, including the Person.
+ * Problem fact class. Tasks include all their resource requirements, including the model.Person.
  */
 public class Task {
     private Person mPerson;
 
-    // Initialising as null here unless I decide to do so in Constructor
+    private Date mDueDate;
+
     private final List<Room> mOccupiedLabs;
 
     public Task(List<Room> rooms) {
@@ -23,7 +25,7 @@ public class Task {
 
     public List<Room> getOccupiedRooms() {
         /**
-         * Returns the office associated with the Person, as well as the rooms specific to the task
+         * Returns the office associated with the model.Person, as well as the rooms specific to the task
          */
         List<Room> roomList = new ArrayList<Room>();
         roomList.add(mPerson.getOffice());
@@ -31,4 +33,7 @@ public class Task {
         return roomList;
     }
 
+    public Date getDueDate() {
+        return mDueDate;
+    }
 }

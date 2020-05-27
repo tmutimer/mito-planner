@@ -1,3 +1,5 @@
+package model;
+
 /**
  * Problem fact class. People have an office they are associated with, but the lab bench is left to the task.
  */

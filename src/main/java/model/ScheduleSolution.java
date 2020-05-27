@@ -1,9 +1,13 @@
+package model;
+
+import org.optaplanner.core.api.domain.constraintweight.ConstraintConfigurationProvider;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.drools.ProblemFactCollectionProperty;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import solver.MitoConstraintConfiguration;
 
 import java.util.List;
 
@@ -11,7 +15,10 @@ import java.util.List;
  * Contains the solution, which is a list of completed ShiftAssignments.
  */
 @PlanningSolution
-public class ScheduleProblem {
+public class ScheduleSolution {
+
+    @ConstraintConfigurationProvider
+    private MitoConstraintConfiguration mConstraintConfiguration;
 
     // The NurseRoster file annotates the fields, not the getters,
     // even though the fields are private. Will do the same.
@@ -30,7 +37,7 @@ public class ScheduleProblem {
     @ProblemFactCollectionProperty
     private List<Shift> mShiftList;
 
-    // TODO implement Equipment
+    // TODO implement model.Equipment
 
     // TODO to improve performance, can calculate a 'Cached Problem Fact Collection' of which Tasks definitely conflict,
     //   for example, any combination of Tasks done by the same person or Tasks which require use of

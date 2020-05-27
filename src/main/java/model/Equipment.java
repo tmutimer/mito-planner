@@ -1,3 +1,5 @@
+package model;
+
 /**
  * Each instance represents a type of equipment in a given room
  */
@@ -7,7 +9,7 @@ public class Equipment {
     // Example name: 'PCR (047)'.
     private final String mName;
 
-    // Number of pieces of equipment of the type (and Room associated).
+    // Number of pieces of equipment of the type (and model.Room associated).
     private final int mNumberOfEquipment;
 
     public Equipment(int id, String name, int numberOfEquipment) {

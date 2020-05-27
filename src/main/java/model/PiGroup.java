@@ -1,3 +1,5 @@
+package model;
+
 /**
  * Problem fact. People belong to PI Groups.
  */
