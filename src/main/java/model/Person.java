@@ -9,13 +9,15 @@ public class Person {
     private final int mId;
     private final String mName;
     private final Room mOffice;
+    private final PiGroup mPiGroup;
     // TODO this may need to be implemented as a constraint elsewhere as per end of 4.3.3.1
     private final int mWeeklyShiftLimit;
 
-    public Person(int id, String name, Room office, int weeklyShiftLimit) {
+    public Person(int id, String name, Room office, PiGroup piGroup, int weeklyShiftLimit) {
         mId = id;
         mName = name;
         mOffice = office;
+        mPiGroup = piGroup;
         mWeeklyShiftLimit = weeklyShiftLimit;
     }
 
@@ -29,6 +31,10 @@ public class Person {
 
     public String getName() {
         return mName;
+    }
+
+    public PiGroup getPiGroup() {
+        return mPiGroup;
     }
 
     public int getWeeklyShiftLimit() {

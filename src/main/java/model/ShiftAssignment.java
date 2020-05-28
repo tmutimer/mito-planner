@@ -33,4 +33,8 @@ public class ShiftAssignment {
         }
         return mShift.getStartTime().after(mTask.getDueDate());
     }
+
+    public PiGroup getPiGroup() {
+        return mTask.getPerson().getPiGroup();
+    }
 }

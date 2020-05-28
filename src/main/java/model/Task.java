@@ -15,13 +15,19 @@ public class Task {
 
     private final List<Room> mOccupiedLabs;
 
-    public Task(List<Room> rooms) {
+    private final int mPriority;
+
+    public Task(Person person, Date dueDate, List<Room> rooms, int priority) {
+        mPerson = person;
+        mDueDate = dueDate;
         mOccupiedLabs = rooms;
+        mPriority = priority;
     }
 
     public Person getPerson() {
         return mPerson;
     }
+
 
     public List<Room> getOccupiedRooms() {
         /**
@@ -35,5 +41,13 @@ public class Task {
 
     public Date getDueDate() {
         return mDueDate;
+    }
+
+    public List<Room> getOccupiedLabs() {
+        return mOccupiedLabs;
+    }
+
+    public int getPriority() {
+        return mPriority;
     }
 }

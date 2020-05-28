@@ -107,7 +107,7 @@ public class ProblemData {
                     }
 
                     int quantity = Integer.parseInt(data[4]);
-                    Person person = new Person(id, name, office, weeklyShiftLimit);
+                    Person person = new Person(id, name, office, piGroup, weeklyShiftLimit);
                     personList.add(person);
                 }
             } catch (IOException e) {
