@@ -11,8 +11,10 @@
 
     <!-- Define the score function -->
     <scoreDirectorFactory>
-<!--        TODO this obviously is wrong-->
-        <scoreDrl>org/optaplanner/examples/nqueens/solver/nQueensConstraints.drl</scoreDrl>
+        <constraintProviderClass>solver.MitoConstraintProvider</constraintProviderClass>
     </scoreDirectorFactory>
 
+    <termination>
+        <secondsSpentLimit>30</secondsSpentLimit>
+    </termination>
 </solver>

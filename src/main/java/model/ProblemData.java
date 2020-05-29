@@ -3,9 +3,9 @@ package model;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Encapsulates the input data for the problem
@@ -17,6 +17,7 @@ public class ProblemData {
     private List<Equipment> mEquipmentList;
     private List<Person> mPersonList;
     private List<Task> mTaskList;
+    private List<PiGroup> mPiGroupList;
 
     public ProblemData() {
         mRoomList = getRoomList();
@@ -80,6 +81,29 @@ public class ProblemData {
         return equipmentList;
     }
 
+    public List<PiGroup> getPiGroupList() {
+        List<PiGroup> piGroupList = new ArrayList<>();
+        BufferedReader csvReader;
+        {
+            try {
+                String row;
+                csvReader = new BufferedReader(new FileReader("pi_groups.csv"));
+                while ((row = csvReader.readLine()) != null) {
+                    String[] data = row.split(",");
+                    int id = Integer.parseInt(data[0]);
+                    String name = data[1];
+                    int quantity = Integer.parseInt(data[4]);
+                    PiGroup piGroup = new PiGroup(name);
+                    piGroupList.add(piGroup);
+                }
+                csvReader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return piGroupList;
+    }
+
     // model.Person // TODO Fix this hot garbage
     public List<Person> getPersonList() throws Exception {
         List<Person> personList = new ArrayList<>();
@@ -92,14 +116,27 @@ public class ProblemData {
                     String[] data = row.split(",");
                     int id = Integer.parseInt(data[0]);
                     String name = data[1];
+                    String piGroupName = data[3];
+                    PiGroup piGroup = null;
+
+                    // get PI group
+                    for (PiGroup g : mPiGroupList) {
+                        if (piGroupName.equals(g.getName())) {
+                            piGroup = g;
+                        }
+                    }
+
                     String officeName = data[4];
                     Room office = null;
-                    int weeklyShiftLimit = Integer.parseInt(data[5]);
+
+                    // get office
                     for (Room r : mRoomList) {
                         if (officeName.equals(r.getRoomName())) {
                             office = r;
                         }
                     }
+
+                    int weeklyShiftLimit = Integer.parseInt(data[5]);
 
                     // Validate that office was found:
                     if (Objects.isNull(office)) {
@@ -118,7 +155,7 @@ public class ProblemData {
     }
 
     public List<Task> getTaskList() throws Exception {
-        List<Person> taskList = new ArrayList<>();
+        List<Task> taskList = new ArrayList<>();
         BufferedReader csvReader;
         {
             try {
@@ -141,10 +178,9 @@ public class ProblemData {
                     if (Objects.isNull(office)) {
                         throw new Exception("Office not found! Was the name typed correctly?");
                     }
-
                     int quantity = Integer.parseInt(data[4]);
-                    Task task = new Task(id, name, office, weeklyShiftLimit);
-                    taskList.add(person);
+                    Task task = new Task(person, dueDate, rooms, priority);
+                    taskList.add(task);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -153,4 +189,51 @@ public class ProblemData {
         return taskList;
 
     }
+
+    // Currently returns a list of 100 shifts, starting from the 1st of july, every day for 50 days, 7am-12pm, 1pm-6pm
+    public List<Shift> getShiftList() {
+        List<Shift> shiftList = new ArrayList<>();
+        List<Shift> startList = new ArrayList<>();
+        List<Shift> endList = new ArrayList<>();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+
+        Date day = null;
+        try {
+            day = sdf.parse("01072020");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(day);
+
+        Calendar morningStart = (Calendar) c.clone();
+        morningStart.add(Calendar.HOUR, 7);
+        Calendar morningEnd = (Calendar) c.clone();
+        morningEnd.add(Calendar.HOUR, 12);
+
+        Calendar eveningStart = (Calendar) c.clone();
+        eveningStart.add(Calendar.HOUR, 13);
+        Calendar eveningEnd = (Calendar) c.clone();
+        eveningEnd.add(Calendar.HOUR, 18);
+
+        for (int i = 0; i < 50; i++) {
+
+            Shift morningShift = new Shift(morningStart.getTime(), morningEnd.getTime());
+            morningStart.add(Calendar.DAY_OF_YEAR, 1);
+            morningEnd.add(Calendar.DAY_OF_YEAR, 1);
+
+            Shift eveningShift = new Shift(eveningStart.getTime(), eveningEnd.getTime());
+            eveningStart.add(Calendar.DAY_OF_YEAR, 1);
+            eveningEnd.add(Calendar.DAY_OF_YEAR, 1);
+
+            shiftList.add(morningShift);
+            shiftList.add(eveningShift);
+
+        }
+
+        return shiftList;
+    }
+
 }

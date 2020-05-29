@@ -11,7 +11,7 @@ import java.util.function.ToIntFunction;
 
 import static org.optaplanner.core.api.score.stream.ConstraintCollectors.count;
 
-public class MitoConstraints implements ConstraintProvider {
+public class MitoConstraintProvider implements ConstraintProvider {
     @Override
     public Constraint[] defineConstraints(ConstraintFactory factory) {
         return new Constraint[] {
