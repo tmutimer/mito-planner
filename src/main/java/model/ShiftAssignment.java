@@ -37,4 +37,9 @@ public class ShiftAssignment {
     public PiGroup getPiGroup() {
         return mTask.getPerson().getPiGroup();
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(mShift) + mTask;
+    }
 }

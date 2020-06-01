@@ -14,7 +14,12 @@
         <constraintProviderClass>solver.MitoConstraintProvider</constraintProviderClass>
     </scoreDirectorFactory>
 
+    <constructionHeuristic>
+        <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
+    </constructionHeuristic>
+
     <termination>
         <secondsSpentLimit>30</secondsSpentLimit>
     </termination>
+
 </solver>

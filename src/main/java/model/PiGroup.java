@@ -11,7 +11,7 @@ public class PiGroup {
     }
 
     public String getName() {
-        return PiGroupName;
+        return mName;
     }
 
     // TODO figure out what goes in here

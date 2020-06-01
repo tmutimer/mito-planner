@@ -40,4 +40,9 @@ public class Person {
     public int getWeeklyShiftLimit() {
         return mWeeklyShiftLimit;
     }
+
+    @Override
+    public String toString() {
+        return "Person Name=" + mName;
+    }
 }

@@ -23,4 +23,10 @@ public class Shift {
     public Date getEndTime() {
         return mEndTime;
     }
+
+    @Override
+    public String toString() {
+        return "Start Time=" + mStartTime +
+                ", End Time=" + mEndTime;
+    }
 }

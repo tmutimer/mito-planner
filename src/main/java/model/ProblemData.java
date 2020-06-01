@@ -164,22 +164,18 @@ public class ProblemData {
                 while ((row = csvReader.readLine()) != null) {
                     String[] data = row.split(",");
                     int id = Integer.parseInt(data[0]);
-                    String name = data[1];
-                    String officeName = data[4];
-                    Room office = null;
-                    int weeklyShiftLimit = Integer.parseInt(data[5]);
-                    for (Room r : mRoomList) {
-                        if (officeName.equals(r.getRoomName())) {
-                            office = r;
+                    String personString = data[1];
+                    Person person = null;
+                    for (Person p : mPersonList) {
+                        if (p.getName().equals(personString)) {
+                            person = p;
                         }
                     }
+                    String name = data[2];
+                    int priority = Integer.parseInt(data[6]);
 
                     // Validate that office was found:
-                    if (Objects.isNull(office)) {
-                        throw new Exception("Office not found! Was the name typed correctly?");
-                    }
-                    int quantity = Integer.parseInt(data[4]);
-                    Task task = new Task(person, dueDate, rooms, priority);
+                    Task task = new Task(id, person, name, null, null, priority);
                     taskList.add(task);
                 }
             } catch (IOException e) {
