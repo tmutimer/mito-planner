@@ -1,5 +1,8 @@
 package model;
 
+import org.drools.core.util.StringUtils;
+import org.drools.modelcompiler.util.StringUtil;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -18,28 +21,28 @@ public class ProblemData {
     private List<Person> mPersonList;
     private List<Task> mTaskList;
     private List<PiGroup> mPiGroupList;
+    private List<Shift> mShiftList;
 
-    public ProblemData() {
-        mRoomList = getRoomList();
-        mEquipmentList = getEquipmentList();
-
-        try {
-            mPersonList = getPersonList();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+    public ProblemData() throws Exception {
+        mRoomList = createRoomList();
+        mPiGroupList = createPiGroupList();
+        mEquipmentList = createEquipmentList();
+        mPersonList = createPersonList();
+        mTaskList = createTaskList();
+        mShiftList = createShiftList();
     }
 
     // TODO add validations as per model.Person
     // model.Room //
-    public List<Room> getRoomList() {
+    public List<Room> createRoomList() {
         List<Room> roomList = new ArrayList<>();
         BufferedReader csvReader;
         {
             try {
                 String row;
-                csvReader = new BufferedReader(new FileReader("rooms.csv"));
+                csvReader = new BufferedReader(new FileReader("/Users/Tom/IdeaProjects/mito-planner/src/main/resources/rooms.csv"));
+                //skip header
+                csvReader.readLine();
                 while ((row = csvReader.readLine()) != null) {
                     String[] data = row.split(",");
                     int id = Integer.parseInt(data[0]);
@@ -48,6 +51,9 @@ public class ProblemData {
                     Room room = new Room(id, name, capacity);
                     roomList.add(room);
                 }
+//                for (Room r : roomList) {
+//                    System.out.println(r);
+//                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -58,13 +64,15 @@ public class ProblemData {
 
     // TODO see if any validations are needed
     // model.Equipment //
-    public List<Equipment> getEquipmentList() {
+    public List<Equipment> createEquipmentList() {
         List<Equipment> equipmentList = new ArrayList<>();
         BufferedReader csvReader;
         {
             try {
                 String row;
-                csvReader = new BufferedReader(new FileReader("equipment.csv"));
+                csvReader = new BufferedReader(new FileReader("/Users/Tom/IdeaProjects/mito-planner/src/main/resources/equipment.csv"));
+                //skip header
+                csvReader.readLine();
                 while ((row = csvReader.readLine()) != null) {
                     String[] data = row.split(",");
                     int id = Integer.parseInt(data[0]);
@@ -81,18 +89,19 @@ public class ProblemData {
         return equipmentList;
     }
 
-    public List<PiGroup> getPiGroupList() {
+    public List<PiGroup> createPiGroupList() {
         List<PiGroup> piGroupList = new ArrayList<>();
         BufferedReader csvReader;
         {
             try {
                 String row;
-                csvReader = new BufferedReader(new FileReader("pi_groups.csv"));
+                csvReader = new BufferedReader(new FileReader("/Users/Tom/IdeaProjects/mito-planner/src/main/resources/pi_groups.csv"));
+                //skip header
+                csvReader.readLine();
                 while ((row = csvReader.readLine()) != null) {
                     String[] data = row.split(",");
                     int id = Integer.parseInt(data[0]);
                     String name = data[1];
-                    int quantity = Integer.parseInt(data[4]);
                     PiGroup piGroup = new PiGroup(name);
                     piGroupList.add(piGroup);
                 }
@@ -104,14 +113,15 @@ public class ProblemData {
         return piGroupList;
     }
 
-    // model.Person // TODO Fix this hot garbage
-    public List<Person> getPersonList() throws Exception {
+    public List<Person> createPersonList() throws Exception {
         List<Person> personList = new ArrayList<>();
         BufferedReader csvReader;
         {
             try {
                 String row;
-                csvReader = new BufferedReader(new FileReader("people.csv"));
+                csvReader = new BufferedReader(new FileReader("/Users/Tom/IdeaProjects/mito-planner/src/main/resources/people.csv"));
+                //skip header
+                csvReader.readLine();
                 while ((row = csvReader.readLine()) != null) {
                     String[] data = row.split(",");
                     int id = Integer.parseInt(data[0]);
@@ -131,19 +141,23 @@ public class ProblemData {
 
                     // get office
                     for (Room r : mRoomList) {
+                        String roomName = r.getRoomName();
                         if (officeName.equals(r.getRoomName())) {
+                            System.out.println("Matched " + roomName + " with " + r.getRoomName());
                             office = r;
+                            System.out.println("variable 'office': " + office.getRoomName());
                         }
+
                     }
 
                     int weeklyShiftLimit = Integer.parseInt(data[5]);
 
                     // Validate that office was found:
-                    if (Objects.isNull(office)) {
+                    if (Objects.isNull(office) && !StringUtils.isEmpty(officeName)) {
+                        System.out.println("Failed to match " + officeName);
                         throw new Exception("Office not found! Was the name typed correctly?");
                     }
 
-                    int quantity = Integer.parseInt(data[4]);
                     Person person = new Person(id, name, office, piGroup, weeklyShiftLimit);
                     personList.add(person);
                 }
@@ -154,15 +168,18 @@ public class ProblemData {
         return personList;
     }
 
-    public List<Task> getTaskList() throws Exception {
+    public List<Task> createTaskList() throws Exception {
         List<Task> taskList = new ArrayList<>();
         BufferedReader csvReader;
         {
             try {
                 String row;
-                csvReader = new BufferedReader(new FileReader("tasks.csv"));
+                csvReader = new BufferedReader(new FileReader("/Users/Tom/IdeaProjects/mito-planner/src/main/resources/tasks.csv"));
+                //skip header
+                csvReader.readLine();
                 while ((row = csvReader.readLine()) != null) {
                     String[] data = row.split(",");
+                    System.out.println(data[0]);
                     int id = Integer.parseInt(data[0]);
                     String personString = data[1];
                     Person person = null;
@@ -187,7 +204,7 @@ public class ProblemData {
     }
 
     // Currently returns a list of 100 shifts, starting from the 1st of july, every day for 50 days, 7am-12pm, 1pm-6pm
-    public List<Shift> getShiftList() {
+    public List<Shift> createShiftList() {
         List<Shift> shiftList = new ArrayList<>();
         List<Shift> startList = new ArrayList<>();
         List<Shift> endList = new ArrayList<>();
@@ -232,4 +249,27 @@ public class ProblemData {
         return shiftList;
     }
 
+    public List<Room> getRoomList() {
+        return mRoomList;
+    }
+
+    public List<Equipment> getEquipmentList() {
+        return mEquipmentList;
+    }
+
+    public List<Person> getPersonList() {
+        return mPersonList;
+    }
+
+    public List<Task> getTaskList() {
+        return mTaskList;
+    }
+
+    public List<PiGroup> getPiGroupList() {
+        return mPiGroupList;
+    }
+
+    public List<Shift> getShiftList() {
+        return mShiftList;
+    }
 }

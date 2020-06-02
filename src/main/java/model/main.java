@@ -8,7 +8,7 @@ import java.util.List;
 public class main {
     private static final String SOLVER_CONFIG = "mitoScheduleSolver.xml";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         SolverFactory<ScheduleSolution> solverFactory = SolverFactory.createFromXmlResource(SOLVER_CONFIG);
 
         int x = 1;

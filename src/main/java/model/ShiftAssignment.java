@@ -18,6 +18,13 @@ public class ShiftAssignment {
     // Planning variable: changes during planning, between score calculations.
     private Task mTask;
 
+    public ShiftAssignment() {
+    }
+
+    public ShiftAssignment(Shift shift) {
+        mShift = shift;
+    }
+
     @PlanningVariable(valueRangeProviderRefs = {"taskList"}, nullable = true)
     public Task getTask() {
         return mTask;
@@ -28,7 +35,8 @@ public class ShiftAssignment {
     }
 
     public boolean isTaskAssignedAfterDueDate() {
-        if (Objects.isNull(mTask.getDueDate())) {
+
+        if (Objects.isNull(mTask) || Objects.isNull(mTask.getDueDate())) {
             return false;
         }
         return mShift.getStartTime().after(mTask.getDueDate());
@@ -41,5 +49,9 @@ public class ShiftAssignment {
     @Override
     public String toString() {
         return String.valueOf(mShift) + mTask;
+    }
+
+    public static boolean isTaskAssigned(ShiftAssignment shiftAssignment) {
+        return !Objects.isNull(shiftAssignment.mTask);
     }
 }

@@ -47,6 +47,7 @@ public class MitoConstraintProvider implements ConstraintProvider {
         ToIntFunction<ShiftAssignment> getPriority = (shiftAssignment) -> shiftAssignment.getTask().getPriority();
 
         return factory.from(ShiftAssignment.class)
+                .filter(ShiftAssignment::isTaskAssigned)
                 .rewardConfigurable("High priority work done", getPriority);
     }
 

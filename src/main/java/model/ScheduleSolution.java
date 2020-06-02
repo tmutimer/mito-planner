@@ -9,6 +9,7 @@ import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import solver.MitoConstraintConfiguration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,7 +38,25 @@ public class ScheduleSolution {
     @ProblemFactCollectionProperty
     private List<Shift> mShiftList;
 
+
     // TODO implement model.Equipment
+
+    public ScheduleSolution() throws Exception {
+        ProblemData data = new ProblemData();
+        mTaskList = data.getTaskList();
+        mPersonList = data.getPersonList();
+        mPiGroupList = data.getPiGroupList();
+        mRoomList = data.getRoomList();
+        mShiftList = data.createShiftList();
+        mAssignments = new ArrayList<>();
+        //create the initialised shiftAssignments
+        for (Shift shift : mShiftList) {
+            ShiftAssignment shiftAssignment = new ShiftAssignment(shift);
+            mAssignments.add(shiftAssignment);
+        }
+        mConstraintConfiguration = new MitoConstraintConfiguration();
+    }
+
 
     // TODO to improve performance, can calculate a 'Cached Problem Fact Collection' of which Tasks definitely conflict,
     //   for example, any combination of Tasks done by the same person or Tasks which require use of
