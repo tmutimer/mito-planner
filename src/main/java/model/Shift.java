@@ -26,7 +26,6 @@ public class Shift {
 
     @Override
     public String toString() {
-        return "Start Time=" + mStartTime +
-                ", End Time=" + mEndTime;
+        return "Shift at " + mStartTime;
     }
 }

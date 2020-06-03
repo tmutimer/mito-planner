@@ -22,7 +22,9 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 respectDueDates(factory),
                 scheduleHighPriorityTasks(factory),
                 schedulePiGroupsFairly(factory),
-                doNotRepeatTasks(factory)
+                doNotRepeatTasks(factory),
+                doNotDoubleBookPerson(factory),
+                scheduleTasks(factory)
                 // TODO finish adding the other constraints when you've created them
         };
     }
@@ -43,6 +45,7 @@ public class MitoConstraintProvider implements ConstraintProvider {
 
     private Constraint respectDueDates(ConstraintFactory factory) {
         return factory.from(ShiftAssignment.class)
+                .filter(ShiftAssignment::isTaskAssigned)
                 .filter(ShiftAssignment::isTaskAssignedAfterDueDate)
                 .penalizeConfigurable("Due date conflict");
     }
@@ -63,9 +66,7 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 .penalizeConfigurable("PI group unfairness", getCountSquared);
     }
 
-    // TODO create constraint config
     private Constraint doNotRepeatTasks(ConstraintFactory factory) {
-        System.out.println("Do not repeat tasks constraint is being created");
         return factory.from(ShiftAssignment.class)
                 .filter(ShiftAssignment::isTaskAssigned)
                 .groupBy(ShiftAssignment::getTask, count())
@@ -74,4 +75,16 @@ public class MitoConstraintProvider implements ConstraintProvider {
 
     }
 
+    private Constraint doNotDoubleBookPerson(ConstraintFactory factory) {
+        return factory.from(ShiftAssignment.class)
+                .groupBy(ShiftAssignment::getShift, ShiftAssignment::getPerson, count())
+                .filter(((shift, person, integer) -> integer > 1))
+                .penalizeConfigurable("Do not double book people");
+    }
+
+    private Constraint scheduleTasks(ConstraintFactory factory) {
+        return factory.from(ShiftAssignment.class)
+                .filter(ShiftAssignment::isTaskAssigned)
+                .rewardConfigurable("Schedule tasks");
+    }
 }

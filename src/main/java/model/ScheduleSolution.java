@@ -142,18 +142,22 @@ public class ScheduleSolution {
         mScore = score;
     }
 
-    // replaced, get rid of if not used
-    public int getNumTaskRepeats() {
-        int numTaskRepeats = 0;
-        for (ShiftAssignment assignment: mAssignments) {
-            for (ShiftAssignment iteratedAssignment: mAssignments) {
-                if (!(iteratedAssignment == assignment) && assignment.getTask() == iteratedAssignment.getTask()) {
-                    numTaskRepeats+=1;
+    // v COMPLEX METHODS v //
+
+    public int getNumberUnassignedTasks() {
+        int totalNumTasks = mTaskList.size();
+        int totalAssignedTasks = 0;
+        for (Task t : mTaskList) {
+            for (ShiftAssignment shiftAssignment : mAssignments) {
+                if (shiftAssignment.getTask() == t) {
+                    totalAssignedTasks += 1;
                 }
             }
         }
-        return numTaskRepeats;
+        return totalNumTasks - totalAssignedTasks;
     }
+
+    // v CSV EXPORT METHODS v //
 
     public static String[] assignmentToCsvRow(ShiftAssignment assignment) {
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/YYYY");

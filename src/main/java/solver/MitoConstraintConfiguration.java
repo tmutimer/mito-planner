@@ -29,8 +29,16 @@ public class MitoConstraintConfiguration {
     @ConstraintWeight("Do not repeat tasks")
     private HardSoftScore mTaskRepeatConflict = HardSoftScore.ofHard(10);
 
+    @ConstraintWeight("Do not double book people")
+    private HardSoftScore mPersonBookConflict = HardSoftScore.ofHard(10);
+
 
     // SOFT CONSTRAINTS //
+
+    // as many tasks should be scheduled as possible
+    @ConstraintWeight("Schedule tasks")
+    private HardSoftScore mScheduleTasks = HardSoftScore.ofSoft(10);
+
     // due dates should be met
     @ConstraintWeight("Due date conflict")
     private HardSoftScore mDueDateconflict = HardSoftScore.ofSoft(25);
@@ -42,7 +50,7 @@ public class MitoConstraintConfiguration {
     // shift assignments should be fairly split between PI groups
     // TODO look at 5.4.10 for implementing this - squared workload implementation
     @ConstraintWeight("PI group unfairness")
-    private HardSoftScore mPiGroupFairness = HardSoftScore.ofSoft(10);
+    private HardSoftScore mPiGroupFairness = HardSoftScore.ofSoft(1);
 
     // higher priority tasks should go first
     @ConstraintWeight("High priority work done")

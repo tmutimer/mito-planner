@@ -1,6 +1,5 @@
 package model;
 
-import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 
@@ -11,8 +10,6 @@ public class main {
 
     public static void main(String[] args) throws Exception {
         SolverFactory<ScheduleSolution> solverFactory = SolverFactory.createFromXmlResource(SOLVER_CONFIG);
-
-        int x = 1;
 
         Solver<ScheduleSolution> solver = solverFactory.buildSolver();
 
@@ -28,8 +25,15 @@ public class main {
 
     public static void displaySolution(ScheduleSolution solution) {
         List<ShiftAssignment> assignments = solution.getAssignments();
+        int nullCount = 0;
         for (ShiftAssignment assignment: assignments) {
-            System.out.println(assignment);
+            if (assignment.isTaskAssigned()) {
+                System.out.println(assignment);
+            } else {
+                nullCount+= 1;
+            }
         }
+        System.out.println("Shift assignment slots not used: " + nullCount);
+        System.out.println("Number of unassigned tasks: " + solution.getNumberUnassignedTasks());
     }
 }

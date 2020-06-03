@@ -54,11 +54,18 @@ public class ShiftAssignment {
         return String.valueOf(mShift) + " " + mTask;
     }
 
-    public static boolean isTaskAssigned(ShiftAssignment shiftAssignment) {
-        return !Objects.isNull(shiftAssignment.mTask);
+    public boolean isTaskAssigned() {
+        return !Objects.isNull(mTask);
     }
 
     public Shift getShift() {
         return mShift;
+    }
+
+    public Person getPerson() {
+        if (Objects.isNull(getTask())) {
+            return null;
+        }
+        return getTask().getPerson();
     }
 }
