@@ -1,5 +1,6 @@
 package model;
 
+import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 
@@ -20,6 +21,8 @@ public class main {
         ScheduleSolution solvedSolution = solver.solve(unsolvedSolution);
 
         displaySolution(solvedSolution);
+
+        System.out.println("Score: " + solvedSolution.getScore());
 
     }
 

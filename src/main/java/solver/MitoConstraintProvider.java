@@ -7,6 +7,7 @@ import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
 
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.function.ToIntBiFunction;
 import java.util.function.ToIntFunction;
 
@@ -19,7 +20,9 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 doNotExceedRoomCapacity(factory),
                 doNotExceedEquipmentCapacity(factory),
                 respectDueDates(factory),
-                scheduleHighPriorityTasks(factory)
+                scheduleHighPriorityTasks(factory),
+                schedulePiGroupsFairly(factory),
+                doNotRepeatTasks(factory)
                 // TODO finish adding the other constraints when you've created them
         };
     }
@@ -52,20 +55,22 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 .rewardConfigurable("High priority work done", getPriority);
     }
 
-    // this may have the side effect of grouping nulls, meaning leaving many slots unused will be penalised
-    // but on the other hand does encourage some null slots to exist. Hopefully that behaviour is overridden by other constraints
-    // but this constraint should not be weighted too heavily, just in case.
     private Constraint schedulePiGroupsFairly(ConstraintFactory factory) {
         ToIntBiFunction<PiGroup, Integer> getCountSquared = (piGroup, count) -> count * count;
         return factory.from(ShiftAssignment.class)
+                .filter(ShiftAssignment::isTaskAssigned)
                 .groupBy(ShiftAssignment::getPiGroup, count())
                 .penalizeConfigurable("PI group unfairness", getCountSquared);
     }
 
     // TODO create constraint config
     private Constraint doNotRepeatTasks(ConstraintFactory factory) {
-        return factory.from(ScheduleSolution.class)
-                .penalizeConfigurable("Do not repeat tasks", ScheduleSolution::getNumTaskRepeats);
+        System.out.println("Do not repeat tasks constraint is being created");
+        return factory.from(ShiftAssignment.class)
+                .filter(ShiftAssignment::isTaskAssigned)
+                .groupBy(ShiftAssignment::getTask, count())
+                .filter((task, integer) -> integer > 1)
+                .penalizeConfigurable("Do not repeat tasks");
 
     }
 

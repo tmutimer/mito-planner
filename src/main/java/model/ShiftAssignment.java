@@ -43,12 +43,15 @@ public class ShiftAssignment {
     }
 
     public PiGroup getPiGroup() {
+        if (Objects.isNull(mTask)) {
+            return null;
+        }
         return mTask.getPerson().getPiGroup();
     }
 
     @Override
     public String toString() {
-        return String.valueOf(mShift) + mTask;
+        return String.valueOf(mShift) + " " + mTask;
     }
 
     public static boolean isTaskAssigned(ShiftAssignment shiftAssignment) {

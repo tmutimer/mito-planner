@@ -54,7 +54,8 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Person=" + mPerson +
+        return  "Task name= " + mName +
+                ", Person=" + mPerson +
                 ", Due Date=" + mDueDate +
                 ", Priority=" + mPriority;
     }

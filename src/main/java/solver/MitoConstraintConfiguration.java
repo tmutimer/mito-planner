@@ -8,7 +8,7 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 public class MitoConstraintConfiguration {
 
     // HARD CONSTRAINTS //
-    // at least 2 people must be assigned to a shift
+    // at least 2 people must be assigned to a shift, if any are
     // (no need to specify max constraint, as handled by number of ShiftAssignments per shift instantiated in solution)
     @ConstraintWeight("Floor capacity conflict")
     private HardSoftScore mFloorMinCapacityConflict = HardSoftScore.ofHard(10);
@@ -17,10 +17,6 @@ public class MitoConstraintConfiguration {
     @ConstraintWeight("Room capacity conflict")
     private HardSoftScore mRoomCapacityConflict = HardSoftScore.ofHard(10);
 
-    // tasks should only be assigned once
-    @ConstraintWeight("Do not repeat tasks")
-    private HardSoftScore mTaskRepeatConflict = HardSoftScore.ofHard(100);
-
     // the person must be available for a scheduled task
     @ConstraintWeight("Person conflict")
     private HardSoftScore mPersonConflict = HardSoftScore.ofHard(10);
@@ -28,6 +24,10 @@ public class MitoConstraintConfiguration {
     // the equipment must be available for a scheduled task
     @ConstraintWeight("Equipment conflict")
     private HardSoftScore mEquipmentConflict = HardSoftScore.ofHard(10);
+
+    // tasks should only be assigned once
+    @ConstraintWeight("Do not repeat tasks")
+    private HardSoftScore mTaskRepeatConflict = HardSoftScore.ofHard(10);
 
 
     // SOFT CONSTRAINTS //

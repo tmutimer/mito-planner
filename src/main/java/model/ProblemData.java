@@ -143,9 +143,7 @@ public class ProblemData {
                     for (Room r : mRoomList) {
                         String roomName = r.getRoomName();
                         if (officeName.equals(r.getRoomName())) {
-                            System.out.println("Matched " + roomName + " with " + r.getRoomName());
                             office = r;
-                            System.out.println("variable 'office': " + office.getRoomName());
                         }
 
                     }
@@ -179,7 +177,6 @@ public class ProblemData {
                 csvReader.readLine();
                 while ((row = csvReader.readLine()) != null) {
                     String[] data = row.split(",");
-                    System.out.println(data[0]);
                     int id = Integer.parseInt(data[0]);
                     String personString = data[1];
                     Person person = null;

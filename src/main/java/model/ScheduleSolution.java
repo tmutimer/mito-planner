@@ -127,6 +127,7 @@ public class ScheduleSolution {
         mScore = score;
     }
 
+    // replaced, get rid of if not used
     public int getNumTaskRepeats() {
         int numTaskRepeats = 0;
         for (ShiftAssignment assignment: mAssignments) {
