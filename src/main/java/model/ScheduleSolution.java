@@ -5,12 +5,21 @@ import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.drools.ProblemFactCollectionProperty;
+import org.optaplanner.core.api.domain.solution.drools.ProblemFactProperty;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import solver.MitoConstraintConfiguration;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Contains the solution, which is a list of completed ShiftAssignments.
@@ -37,6 +46,8 @@ public class ScheduleSolution {
     private List<Room> mRoomList;
     @ProblemFactCollectionProperty
     private List<Shift> mShiftList;
+    @ProblemFactProperty
+    private int mTotalCapacity;
 
 
     // TODO implement model.Equipment
@@ -47,12 +58,16 @@ public class ScheduleSolution {
         mPersonList = data.getPersonList();
         mPiGroupList = data.getPiGroupList();
         mRoomList = data.getRoomList();
-        mShiftList = data.createShiftList();
+        mShiftList = data.getShiftList();
+        mTotalCapacity = data.getTotalCapacity();
         mAssignments = new ArrayList<>();
         //create the initialised shiftAssignments
         for (Shift shift : mShiftList) {
-            ShiftAssignment shiftAssignment = new ShiftAssignment(shift);
-            mAssignments.add(shiftAssignment);
+            // as many shift assignments per shift as there is capacity on the floor
+            for (int i = 0 ; i < mTotalCapacity; i++) {
+                ShiftAssignment shiftAssignment = new ShiftAssignment(shift);
+                mAssignments.add(shiftAssignment);
+            }
         }
         mConstraintConfiguration = new MitoConstraintConfiguration();
     }
@@ -139,4 +154,61 @@ public class ScheduleSolution {
         }
         return numTaskRepeats;
     }
+
+    public static String[] assignmentToCsvRow(ShiftAssignment assignment) {
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/YYYY");
+        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        String row = null;
+
+        Date startDate = assignment.getShift().getStartTime();
+        Date endDate = assignment.getShift().getEndTime();
+
+        String startDateString = dateFormat.format(startDate);
+        String startTimeString = timeFormat.format(startDate);
+
+        String endDateString = dateFormat.format(endDate);
+        String endTimeString = timeFormat.format(endDate);
+
+        String personName = assignment.getTask().getPerson().getName();
+        String taskName = assignment.getTask().getName();
+
+        return new String[] {personName + " - " + taskName, startDateString, startTimeString
+                , endDateString, endTimeString};
+    }
+
+    public List<String[]> getAssignmentsStringArray() {
+        List<String[]> lines = new ArrayList<>();
+        lines.add(new String[] {"Subject", "Start Date", "Start Time", "End Date", "End Time"});
+        for (ShiftAssignment shiftAssignment : getAssignments()) {
+            lines.add(assignmentToCsvRow(shiftAssignment));
+        }
+        return lines;
+    }
+
+    public String convertToCsvString(String[] data) {
+        return Stream.of(data)
+                .map(this::escapeSpecialCharacters)
+                .collect(Collectors.joining(","));
+    }
+
+    public String escapeSpecialCharacters(String data) {
+        String escapedData = data.replaceAll("\\R", " ");
+        if (data.contains(",") || data.contains("\"") || data.contains("'")) {
+            data = data.replace("\"", "\"\"");
+            escapedData = "\"" + data + "\"";
+        }
+        return escapedData;
+    }
+
+    public void writeAssignmentsToCsv() throws IOException {
+        List<String[]> lines = getAssignmentsStringArray();
+        File csvOutputFile = new File("mostRecentExportedSolution.csv");
+        try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
+            lines.stream()
+                    .map(this::convertToCsvString)
+                    .forEach(pw::println);
+        }
+    }
+
+
 }

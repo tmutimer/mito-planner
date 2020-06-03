@@ -16,6 +16,7 @@ import java.util.*;
 public class ProblemData {
     // TODO figure out whether to implement this as HashSet,
     //  may depend how much comparisons are used during planning
+    private int mTotalCapacity;
     private List<Room> mRoomList;
     private List<Equipment> mEquipmentList;
     private List<Person> mPersonList;
@@ -24,6 +25,8 @@ public class ProblemData {
     private List<Shift> mShiftList;
 
     public ProblemData() throws Exception {
+        // TODO make total capacity dynamic from the appropriate csv
+        mTotalCapacity = 50;
         mRoomList = createRoomList();
         mPiGroupList = createPiGroupList();
         mEquipmentList = createEquipmentList();
@@ -268,5 +271,9 @@ public class ProblemData {
 
     public List<Shift> getShiftList() {
         return mShiftList;
+    }
+
+    public int getTotalCapacity() {
+        return mTotalCapacity;
     }
 }

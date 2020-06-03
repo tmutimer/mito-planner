@@ -52,6 +52,10 @@ public class Task {
         return mPriority;
     }
 
+    public String getName() {
+        return mName;
+    }
+
     @Override
     public String toString() {
         return  "Task name= " + mName +

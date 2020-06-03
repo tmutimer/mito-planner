@@ -58,4 +58,7 @@ public class ShiftAssignment {
         return !Objects.isNull(shiftAssignment.mTask);
     }
 
+    public Shift getShift() {
+        return mShift;
+    }
 }
