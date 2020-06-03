@@ -1,13 +1,10 @@
 package solver;
 
 import model.*;
-import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.api.score.stream.Constraint;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
 
-import java.util.List;
-import java.util.function.BiPredicate;
 import java.util.function.ToIntBiFunction;
 import java.util.function.ToIntFunction;
 
@@ -66,13 +63,13 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 .penalizeConfigurable("PI group unfairness", getCountSquared);
     }
 
+    //todo this is broken, penalizing everything
     private Constraint doNotRepeatTasks(ConstraintFactory factory) {
         return factory.from(ShiftAssignment.class)
                 .filter(ShiftAssignment::isTaskAssigned)
                 .groupBy(ShiftAssignment::getTask, count())
                 .filter((task, integer) -> integer > 1)
                 .penalizeConfigurable("Do not repeat tasks");
-
     }
 
     private Constraint doNotDoubleBookPerson(ConstraintFactory factory) {

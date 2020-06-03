@@ -1,15 +1,14 @@
 package model;
 
 import java.util.Date;
-import java.util.LinkedHashMap;
 
 /**
  * The model.Shift is a half-day slot. This has a fixed relationship to model.ShiftAssignment objects,
  * which does not change during planning.
  */
 public class Shift {
-    private Date mStartTime;
-    private Date mEndTime;
+    private final Date mStartTime;
+    private final Date mEndTime;
 
     public Shift(Date startTime, Date endTime) {
         mStartTime = startTime;

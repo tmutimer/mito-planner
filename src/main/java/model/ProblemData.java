@@ -1,7 +1,6 @@
 package model;
 
 import org.drools.core.util.StringUtils;
-import org.drools.modelcompiler.util.StringUtil;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -16,12 +15,12 @@ import java.util.*;
 public class ProblemData {
     // TODO figure out whether to implement this as HashSet,
     //  may depend how much comparisons are used during planning
-    private int mTotalCapacity;
-    private List<Room> mRoomList;
-    private List<Equipment> mEquipmentList;
+    private final int mTotalCapacity;
+    private final List<Room> mRoomList;
+    private final List<Equipment> mEquipmentList;
     private List<Person> mPersonList;
     private List<Task> mTaskList;
-    private List<PiGroup> mPiGroupList;
+    private final List<PiGroup> mPiGroupList;
     private List<Shift> mShiftList;
 
     public ProblemData() throws Exception {
@@ -169,7 +168,7 @@ public class ProblemData {
         return personList;
     }
 
-    public List<Task> createTaskList() throws Exception {
+    public List<Task> createTaskList() {
         List<Task> taskList = new ArrayList<>();
         BufferedReader csvReader;
         {
@@ -204,6 +203,7 @@ public class ProblemData {
     }
 
     // Currently returns a list of 100 shifts, starting from the 1st of july, every day for 50 days, 7am-12pm, 1pm-6pm
+    @SuppressWarnings("SpellCheckingInspection")
     public List<Shift> createShiftList() {
         List<Shift> shiftList = new ArrayList<>();
         List<Shift> startList = new ArrayList<>();
@@ -219,6 +219,7 @@ public class ProblemData {
         }
 
         Calendar c = Calendar.getInstance();
+        assert day != null;
         c.setTime(day);
 
         Calendar morningStart = (Calendar) c.clone();

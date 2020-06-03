@@ -160,7 +160,7 @@ public class ScheduleSolution {
     // v CSV EXPORT METHODS v //
 
     public static String[] assignmentToCsvRow(ShiftAssignment assignment) {
-        DateFormat dateFormat = new SimpleDateFormat("MM/dd/YYYY");
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         String row = null;
 

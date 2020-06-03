@@ -9,10 +9,10 @@ import java.util.List;
  * Problem fact class. Tasks include all their resource requirements, including the model.Person.
  */
 public class Task {
-    private int mId;
-    private Person mPerson;
-    private String mName;
-    private Date mDueDate;
+    private final int mId;
+    private final Person mPerson;
+    private final String mName;
+    private final Date mDueDate;
     private final List<Room> mOccupiedLabs;
     private final int mPriority;
 
@@ -31,10 +31,10 @@ public class Task {
 
 
     public List<Room> getOccupiedRooms() {
-        /**
-         * Returns the office associated with the model.Person, as well as the rooms specific to the task
+        /*
+          Returns the office associated with the model.Person, as well as the rooms specific to the task
          */
-        List<Room> roomList = new ArrayList<Room>();
+        List<Room> roomList = new ArrayList<>();
         roomList.add(mPerson.getOffice());
         roomList.addAll(mOccupiedLabs);
         return roomList;

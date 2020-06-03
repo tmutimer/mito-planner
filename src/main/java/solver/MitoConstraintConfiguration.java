@@ -41,7 +41,7 @@ public class MitoConstraintConfiguration {
 
     // due dates should be met
     @ConstraintWeight("Due date conflict")
-    private HardSoftScore mDueDateconflict = HardSoftScore.ofSoft(25);
+    private HardSoftScore mDueDateConflict = HardSoftScore.ofSoft(25);
 
     // people should not have more than their limit of assigned shifts per week
     @ConstraintWeight("Shift limit conflict")

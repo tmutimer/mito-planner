@@ -4,7 +4,7 @@ package model;
  * Each instance represents a type of equipment in a given room
  */
 public class Equipment {
-    private int mId;
+    private final int mId;
 
     // Example name: 'PCR (047)'.
     private final String mName;

@@ -5,7 +5,7 @@ import org.optaplanner.core.api.solver.SolverFactory;
 
 import java.util.List;
 
-public class main {
+public class Main {
     private static final String SOLVER_CONFIG = "mitoScheduleSolver.xml";
 
     public static void main(String[] args) throws Exception {

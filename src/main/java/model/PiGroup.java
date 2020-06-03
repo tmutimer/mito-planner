@@ -4,7 +4,7 @@ package model;
  * Problem fact. People belong to PI Groups.
  */
 public class PiGroup {
-    private String mName;
+    private final String mName;
 
     public PiGroup(String name) {
         mName = name;
