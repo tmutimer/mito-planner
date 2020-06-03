@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 public class ScheduleSolution {
 
     @ConstraintConfigurationProvider
-    private MitoConstraintConfiguration mConstraintConfiguration;
+    private final MitoConstraintConfiguration mConstraintConfiguration;
 
     // The NurseRoster file annotates the fields, not the getters,
     // even though the fields are private. Will do the same.
@@ -47,7 +47,7 @@ public class ScheduleSolution {
     @ProblemFactCollectionProperty
     private List<Shift> mShiftList;
     @ProblemFactProperty
-    private int mTotalCapacity;
+    private final int mTotalCapacity;
 
 
     // TODO implement model.Equipment

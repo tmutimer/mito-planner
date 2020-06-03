@@ -18,10 +18,10 @@ public class ProblemData {
     private final int mTotalCapacity;
     private final List<Room> mRoomList;
     private final List<Equipment> mEquipmentList;
-    private List<Person> mPersonList;
-    private List<Task> mTaskList;
+    private final List<Person> mPersonList;
+    private final List<Task> mTaskList;
     private final List<PiGroup> mPiGroupList;
-    private List<Shift> mShiftList;
+    private final List<Shift> mShiftList;
 
     public ProblemData() throws Exception {
         // TODO make total capacity dynamic from the appropriate csv
