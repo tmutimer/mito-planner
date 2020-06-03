@@ -126,4 +126,16 @@ public class ScheduleSolution {
     public void setScore(HardSoftScore score) {
         mScore = score;
     }
+
+    public int getNumTaskRepeats() {
+        int numTaskRepeats = 0;
+        for (ShiftAssignment assignment: mAssignments) {
+            for (ShiftAssignment iteratedAssignment: mAssignments) {
+                if (!(iteratedAssignment == assignment) && assignment.getTask() == iteratedAssignment.getTask()) {
+                    numTaskRepeats+=1;
+                }
+            }
+        }
+        return numTaskRepeats;
+    }
 }

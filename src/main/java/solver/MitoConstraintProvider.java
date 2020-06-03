@@ -6,6 +6,7 @@ import org.optaplanner.core.api.score.stream.Constraint;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
 
+import java.util.List;
 import java.util.function.ToIntBiFunction;
 import java.util.function.ToIntFunction;
 
@@ -59,6 +60,13 @@ public class MitoConstraintProvider implements ConstraintProvider {
         return factory.from(ShiftAssignment.class)
                 .groupBy(ShiftAssignment::getPiGroup, count())
                 .penalizeConfigurable("PI group unfairness", getCountSquared);
+    }
+
+    // TODO create constraint config
+    private Constraint doNotRepeatTasks(ConstraintFactory factory) {
+        return factory.from(ScheduleSolution.class)
+                .penalizeConfigurable("Do not repeat tasks", ScheduleSolution::getNumTaskRepeats);
+
     }
 
 }

@@ -54,4 +54,5 @@ public class ShiftAssignment {
     public static boolean isTaskAssigned(ShiftAssignment shiftAssignment) {
         return !Objects.isNull(shiftAssignment.mTask);
     }
+
 }

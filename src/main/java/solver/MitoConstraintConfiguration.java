@@ -17,6 +17,10 @@ public class MitoConstraintConfiguration {
     @ConstraintWeight("Room capacity conflict")
     private HardSoftScore mRoomCapacityConflict = HardSoftScore.ofHard(10);
 
+    // tasks should only be assigned once
+    @ConstraintWeight("Do not repeat tasks")
+    private HardSoftScore mTaskRepeatConflict = HardSoftScore.ofHard(100);
+
     // the person must be available for a scheduled task
     @ConstraintWeight("Person conflict")
     private HardSoftScore mPersonConflict = HardSoftScore.ofHard(10);
