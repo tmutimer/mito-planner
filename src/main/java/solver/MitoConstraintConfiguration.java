@@ -37,11 +37,11 @@ public class MitoConstraintConfiguration {
 
     // as many tasks should be scheduled as possible
     @ConstraintWeight("Schedule tasks")
-    private final HardSoftScore mScheduleTasks = HardSoftScore.ofSoft(10);
+    private final HardSoftScore mScheduleTasks = HardSoftScore.ofSoft(50);
 
     // due dates should be met
-    @ConstraintWeight("Due date conflict")
-    private final HardSoftScore mDueDateConflict = HardSoftScore.ofSoft(25);
+    @ConstraintWeight("Meet due dates")
+    private final HardSoftScore mDueDateConflict = HardSoftScore.ofSoft(100);
 
     // people should not have more than their limit of assigned shifts per week
     @ConstraintWeight("Shift limit conflict")
@@ -54,6 +54,6 @@ public class MitoConstraintConfiguration {
 
     // higher priority tasks should go first
     @ConstraintWeight("High priority work done")
-    private final HardSoftScore mPriorityWorkDone = HardSoftScore.ofSoft(20);
+    private final HardSoftScore mPriorityWorkDone = HardSoftScore.ofSoft(10);
 
 }

@@ -9,6 +9,7 @@ import java.util.function.ToIntBiFunction;
 import java.util.function.ToIntFunction;
 
 import static org.optaplanner.core.api.score.stream.ConstraintCollectors.count;
+import static org.optaplanner.core.api.score.stream.Joiners.equal;
 
 public class MitoConstraintProvider implements ConstraintProvider {
     @Override
@@ -20,6 +21,7 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 scheduleHighPriorityTasks(factory),
                 schedulePiGroupsFairly(factory),
                 doNotRepeatTasks(factory),
+                // TODO this is still broken
                 doNotDoubleBookPerson(factory),
                 scheduleTasks(factory)
                 // TODO finish adding the other constraints when you've created them
@@ -43,8 +45,8 @@ public class MitoConstraintProvider implements ConstraintProvider {
     private Constraint respectDueDates(ConstraintFactory factory) {
         return factory.from(ShiftAssignment.class)
                 .filter(ShiftAssignment::isTaskAssigned)
-                .filter(ShiftAssignment::isTaskAssignedAfterDueDate)
-                .penalizeConfigurable("Due date conflict");
+                .filter(ShiftAssignment::isTaskAssignedByDueDate)
+                .rewardConfigurable("Meet due dates");
     }
 
     private Constraint scheduleHighPriorityTasks(ConstraintFactory factory) {
@@ -63,19 +65,15 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 .penalizeConfigurable("PI group unfairness", getCountSquared);
     }
 
-    //todo this is broken, penalizing everything
     private Constraint doNotRepeatTasks(ConstraintFactory factory) {
-        return factory.from(ShiftAssignment.class)
-                .filter(ShiftAssignment::isTaskAssigned)
-                .groupBy(ShiftAssignment::getTask, count())
-                .filter((task, integer) -> integer > 1)
+        return factory.fromUniquePair(ShiftAssignment.class, equal(ShiftAssignment::getTask))
+                .filter((sa, sa2) -> sa.isTaskAssigned() && sa2.isTaskAssigned())
                 .penalizeConfigurable("Do not repeat tasks");
     }
 
     private Constraint doNotDoubleBookPerson(ConstraintFactory factory) {
-        return factory.from(ShiftAssignment.class)
-                .groupBy(ShiftAssignment::getShift, ShiftAssignment::getPerson, count())
-                .filter(((shift, person, integer) -> integer > 1))
+        return factory.fromUniquePair(ShiftAssignment.class, equal(ShiftAssignment::getPerson), equal(ShiftAssignment::getShift))
+                .filter((sa, sa2) -> sa.isTaskAssigned() && sa2.isTaskAssigned())
                 .penalizeConfigurable("Do not double book people");
     }
 
@@ -84,4 +82,10 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 .filter(ShiftAssignment::isTaskAssigned)
                 .rewardConfigurable("Schedule tasks");
     }
+
+//    private Constraint doNotExceedLimit(ConstraintFactory factory) {
+//        return factory.from(ShiftAssignment.class)
+//                .filter(ShiftAssignment::causingPersonToExceedWeeklyLimit)
+//                .penalizeConfigurable("Shift limit conflict");
+//    }
 }

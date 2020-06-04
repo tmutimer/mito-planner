@@ -1,6 +1,7 @@
 package model;
 
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
+import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 import java.util.Objects;
@@ -12,6 +13,10 @@ import java.util.Objects;
  */
 @PlanningEntity
 public class ShiftAssignment {
+    @PlanningId
+    private int mId;
+
+    private static int sIdCounter;
 
     private Shift mShift;
 
@@ -21,7 +26,12 @@ public class ShiftAssignment {
     public ShiftAssignment() {
     }
 
+    public int getId() {
+        return mId;
+    }
+
     public ShiftAssignment(Shift shift) {
+        mId = ++sIdCounter;
         mShift = shift;
     }
 
@@ -34,12 +44,12 @@ public class ShiftAssignment {
         mTask = task;
     }
 
-    public boolean isTaskAssignedAfterDueDate() {
+    public boolean isTaskAssignedByDueDate() {
 
         if (Objects.isNull(mTask) || Objects.isNull(mTask.getDueDate())) {
             return false;
         }
-        return mShift.getStartTime().after(mTask.getDueDate());
+        return mShift.getStartTime().before(mTask.getDueDate());
     }
 
     public PiGroup getPiGroup() {
@@ -48,6 +58,7 @@ public class ShiftAssignment {
         }
         return mTask.getPerson().getPiGroup();
     }
+
 
     @Override
     public String toString() {

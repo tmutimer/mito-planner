@@ -21,6 +21,8 @@ public class Main {
 
         System.out.println("Score: " + solvedSolution.getScore());
 
+        solvedSolution.writeAssignmentsToCsv();
+
     }
 
     public static void displaySolution(ScheduleSolution solution) {

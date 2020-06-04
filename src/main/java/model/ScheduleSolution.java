@@ -180,22 +180,24 @@ public class ScheduleSolution {
                 , endDateString, endTimeString};
     }
 
-    public List<String[]> getAssignmentsStringArray() {
+    private List<String[]> getAssignmentsStringArray() {
         List<String[]> lines = new ArrayList<>();
         lines.add(new String[] {"Subject", "Start Date", "Start Time", "End Date", "End Time"});
         for (ShiftAssignment shiftAssignment : getAssignments()) {
-            lines.add(assignmentToCsvRow(shiftAssignment));
+            if (shiftAssignment.isTaskAssigned()) {
+                lines.add(assignmentToCsvRow(shiftAssignment));
+            }
         }
         return lines;
     }
 
-    public String convertToCsvString(String[] data) {
+    private String convertToCsvString(String[] data) {
         return Stream.of(data)
                 .map(this::escapeSpecialCharacters)
                 .collect(Collectors.joining(","));
     }
 
-    public String escapeSpecialCharacters(String data) {
+    private String escapeSpecialCharacters(String data) {
         String escapedData = data.replaceAll("\\R", " ");
         if (data.contains(",") || data.contains("\"") || data.contains("'")) {
             data = data.replace("\"", "\"\"");

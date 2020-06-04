@@ -168,7 +168,7 @@ public class ProblemData {
         return personList;
     }
 
-    public List<Task> createTaskList() {
+    public List<Task> createTaskList() throws ParseException {
         List<Task> taskList = new ArrayList<>();
         BufferedReader csvReader;
         {
@@ -189,9 +189,13 @@ public class ProblemData {
                     }
                     String name = data[2];
                     int priority = Integer.parseInt(data[6]);
+                    Date dueDate = null;
+                    if (!StringUtils.isEmpty(data[5])) {
+                        dueDate = new SimpleDateFormat("ddMMyyyy").parse(data[5]);
+                    }
 
                     // Validate that office was found:
-                    Task task = new Task(id, person, name, null, null, priority);
+                    Task task = new Task(id, person, name, dueDate, null, priority);
                     taskList.add(task);
                 }
             } catch (IOException e) {
