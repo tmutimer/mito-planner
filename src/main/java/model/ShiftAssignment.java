@@ -4,6 +4,8 @@ import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -26,14 +28,19 @@ public class ShiftAssignment {
     public ShiftAssignment() {
     }
 
-    public int getId() {
-        return mId;
-    }
-
     public ShiftAssignment(Shift shift) {
         mId = ++sIdCounter;
         mShift = shift;
     }
+
+    public int getId() {
+        return mId;
+    }
+
+    public Shift getShift() {
+        return mShift;
+    }
+
 
     @PlanningVariable(valueRangeProviderRefs = {"taskList"}, nullable = true)
     public Task getTask() {
@@ -59,19 +66,24 @@ public class ShiftAssignment {
         return mTask.getPerson().getPiGroup();
     }
 
+    public int getWeek() {
+        Date date = getShift().getStartTime();
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        return Calendar.WEEK_OF_YEAR;
+    }
+
+
 
     @Override
     public String toString() {
-        return String.valueOf(mShift) + " " + mTask;
+        return mShift + " " + mTask;
     }
 
     public boolean isTaskAssigned() {
         return !Objects.isNull(mTask);
     }
 
-    public Shift getShift() {
-        return mShift;
-    }
 
     public Person getPerson() {
         if (Objects.isNull(getTask())) {

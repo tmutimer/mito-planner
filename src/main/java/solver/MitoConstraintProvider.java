@@ -1,6 +1,7 @@
 package solver;
 
 import model.*;
+import org.optaplanner.core.api.function.TriPredicate;
 import org.optaplanner.core.api.score.stream.Constraint;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
@@ -23,7 +24,8 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 doNotRepeatTasks(factory),
                 // TODO this is still broken
                 doNotDoubleBookPerson(factory),
-                scheduleTasks(factory)
+                scheduleTasks(factory),
+                doNotExceedLimit(factory)
                 // TODO finish adding the other constraints when you've created them
         };
     }
@@ -83,9 +85,20 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 .rewardConfigurable("Schedule tasks");
     }
 
-//    private Constraint doNotExceedLimit(ConstraintFactory factory) {
+    //TODO figure out to implement preceeding tasks.
+    // For the given shift assignment, need to hard penalize if
+    // there doesn't exist a shift assignment with lower planningID (or earlier date) with the preceeding task.
+//    private Constraint schedulePreceedingTasks(ConstraintFactory factory) {
 //        return factory.from(ShiftAssignment.class)
-//                .filter(ShiftAssignment::causingPersonToExceedWeeklyLimit)
-//                .penalizeConfigurable("Shift limit conflict");
+//                .ifNotExists(ShiftAssignment.class, )
 //    }
+
+    private Constraint doNotExceedLimit(ConstraintFactory factory) {
+        TriPredicate<Person, Integer, Integer> exceedsLimit = ((person, week, shiftCount) -> shiftCount > person.getWeeklyShiftLimit());
+        return factory.from(ShiftAssignment.class)
+                .filter(ShiftAssignment::isTaskAssigned)
+                .groupBy(ShiftAssignment::getPerson, ShiftAssignment::getWeek, count())
+                .filter(exceedsLimit)
+                .penalizeConfigurable("Shift limit conflict");
+    }
 }
