@@ -1,8 +1,6 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -13,16 +11,22 @@ public class Task {
     private final Person mPerson;
     private final String mName;
     private final Date mDueDate;
-    private final List<Room> mOccupiedLabs;
+    private final List<Room> mRequiredRooms;
+    private final LinkedHashMap<Equipment, Integer> mRequiredEquipment;
     private final int mPriority;
 
-    public Task(int id, Person person, String name, Date dueDate, List<Room> rooms, int priority) {
+    public Task(int id, Person person, String name, Date dueDate, List<Room> rooms, LinkedHashMap<Equipment, Integer> equipment, int priority) {
         mId = id;
         mPerson = person;
         mName = name;
         mDueDate = dueDate;
-        mOccupiedLabs = rooms;
+        mRequiredRooms = rooms;
+        mRequiredEquipment = equipment;
         mPriority = priority;
+    }
+
+    public int getId() {
+        return mId;
     }
 
     public Person getPerson() {
@@ -30,22 +34,22 @@ public class Task {
     }
 
 
-    public List<Room> getOccupiedRooms() {
+    public List<Room> getAllRequiredRooms() {
         /*
           Returns the office associated with the model.Person, as well as the rooms specific to the task
          */
         List<Room> roomList = new ArrayList<>();
         roomList.add(mPerson.getOffice());
-        roomList.addAll(mOccupiedLabs);
+        roomList.addAll(mRequiredRooms);
         return roomList;
+    }
+
+    public LinkedHashMap<Equipment, Integer> getRequiredEquipment() {
+        return mRequiredEquipment;
     }
 
     public Date getDueDate() {
         return mDueDate;
-    }
-
-    public List<Room> getOccupiedLabs() {
-        return mOccupiedLabs;
     }
 
     public int getPriority() {
