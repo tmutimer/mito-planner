@@ -106,29 +106,29 @@ public class MitoConstraintProvider implements ConstraintProvider {
     }
 
     //TODO finish implementing this. Not currently working. Need to figure out how to join/groupby/filter/whatever else
-    private Constraint doNotOverbookEquipment(ConstraintFactory factory) {
-        TriConstraintCollector<ShiftAssignment, Shift, Equipment, Integer, Integer> equipmentUsage = new TriConstraintCollector<ShiftAssignment, Shift, Equipment, Integer, Integer>() {
-            @Override
-            public Supplier<Integer> supplier() {
-                return null;
-            }
-
-            @Override
-            public QuadFunction<Integer, ShiftAssignment, Shift, Equipment, Runnable> accumulator() {
-                return null;
-            }
-
-            @Override
-            public Function<Integer, Integer> finisher() {
-                return null;
-            }
-        }
-        return factory.from(ShiftAssignment.class)
-                // join shift assignments with the shifts they are assignments of
-                .join(Shift.class, equal(ShiftAssignment::getShiftId, Shift::getId))
-                // join with ALL pieces of equipment
-                .join(Equipment.class)
-                .groupBy()
-                .penalizeConfigurable("do not overbook Equipment");
-    }
+//    private Constraint doNotOverbookEquipment(ConstraintFactory factory) {
+//        TriConstraintCollector<ShiftAssignment, Shift, Equipment, Integer, Integer> equipmentUsage = new TriConstraintCollector<ShiftAssignment, Shift, Equipment, Integer, Integer>() {
+//            @Override
+//            public Supplier<Integer> supplier() {
+//                return null;
+//            }
+//
+//            @Override
+//            public QuadFunction<Integer, ShiftAssignment, Shift, Equipment, Runnable> accumulator() {
+//                return null;
+//            }
+//
+//            @Override
+//            public Function<Integer, Integer> finisher() {
+//                return null;
+//            }
+//        };
+//        return factory.from(ShiftAssignment.class)
+//                // join shift assignments with the shifts they are assignments of
+//                .join(Shift.class, equal(ShiftAssignment::getShiftId, Shift::getId))
+//                // join with ALL pieces of equipment
+//                .join(Equipment.class)
+//                .groupBy()
+//                .penalizeConfigurable("do not overbook Equipment");
+//    }
 }
