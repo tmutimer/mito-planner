@@ -18,7 +18,7 @@ public class ShiftAssignment {
     @PlanningId
     private int mId;
 
-    private static int sIdCounter;
+    private static int sIdCounter = 0;
 
     private Shift mShift;
 
@@ -39,6 +39,10 @@ public class ShiftAssignment {
 
     public Shift getShift() {
         return mShift;
+    }
+
+    public int getShiftId() {
+        return mShift.getId();
     }
 
 

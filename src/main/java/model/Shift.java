@@ -9,8 +9,11 @@ import java.util.Date;
 public class Shift {
     private final Date mStartTime;
     private final Date mEndTime;
+    private final int mId;
+    private static int sIdCounter = 0;
 
     public Shift(Date startTime, Date endTime) {
+        mId = ++sIdCounter;
         mStartTime = startTime;
         mEndTime = endTime;
     }
@@ -21,6 +24,10 @@ public class Shift {
 
     public Date getEndTime() {
         return mEndTime;
+    }
+
+    public int getId() {
+        return mId;
     }
 
     @Override
