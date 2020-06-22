@@ -5,8 +5,11 @@ package model;
  */
 public class PiGroup {
     private final String mName;
+    private final int mId;
+    private static int sIdCounter = 0;
 
     public PiGroup(String name) {
+        mId = ++sIdCounter;
         mName = name;
     }
 
