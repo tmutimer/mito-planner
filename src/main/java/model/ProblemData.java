@@ -24,7 +24,7 @@ public class ProblemData {
     private final List<Shift> mShiftList;
 
     public ProblemData() throws Exception {
-        // TODO make total capacity dynamic from the appropriate csv
+        // TODO make total capacity dynamic from the appropriate csv - maybe there should be a settings.txt file.
         mTotalCapacity = 50;
         mRoomList = createRoomList();
         mPiGroupList = createPiGroupList();
@@ -194,8 +194,8 @@ public class ProblemData {
                         dueDate = new SimpleDateFormat("ddMMyyyy").parse(data[5]);
                     }
 
-                    // Validate that office was found:
-                    Task task = new Task(id, person, name, dueDate, null, priority);
+                    // TODO get equipment reading from tasks.csv
+                    Task task = new Task(id, person, name, dueDate, null, null, priority);
                     taskList.add(task);
                 }
             } catch (IOException e) {

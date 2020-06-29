@@ -2,17 +2,21 @@ package solver;
 
 import model.*;
 import org.optaplanner.core.api.function.QuadFunction;
+import org.optaplanner.core.api.function.ToIntTriFunction;
 import org.optaplanner.core.api.function.TriFunction;
 import org.optaplanner.core.api.function.TriPredicate;
 import org.optaplanner.core.api.score.stream.Constraint;
+import org.optaplanner.core.api.score.stream.ConstraintCollectors;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
+import org.optaplanner.core.api.score.stream.bi.BiConstraintCollector;
 import org.optaplanner.core.api.score.stream.bi.BiJoiner;
 import org.optaplanner.core.api.score.stream.tri.TriConstraintCollector;
 
 import java.util.function.*;
 
 import static org.optaplanner.core.api.score.stream.ConstraintCollectors.count;
+import static org.optaplanner.core.api.score.stream.ConstraintCollectors.sum;
 import static org.optaplanner.core.api.score.stream.Joiners.equal;
 
 public class MitoConstraintProvider implements ConstraintProvider {
@@ -106,29 +110,14 @@ public class MitoConstraintProvider implements ConstraintProvider {
     }
 
     //TODO finish implementing this. Not currently working. Need to figure out how to join/groupby/filter/whatever else
-//    private Constraint doNotOverbookEquipment(ConstraintFactory factory) {
-//        TriConstraintCollector<ShiftAssignment, Shift, Equipment, Integer, Integer> equipmentUsage = new TriConstraintCollector<ShiftAssignment, Shift, Equipment, Integer, Integer>() {
-//            @Override
-//            public Supplier<Integer> supplier() {
-//                return null;
-//            }
-//
-//            @Override
-//            public QuadFunction<Integer, ShiftAssignment, Shift, Equipment, Runnable> accumulator() {
-//                return null;
-//            }
-//
-//            @Override
-//            public Function<Integer, Integer> finisher() {
-//                return null;
-//            }
-//        };
-//        return factory.from(ShiftAssignment.class)
-//                // join shift assignments with the shifts they are assignments of
-//                .join(Shift.class, equal(ShiftAssignment::getShiftId, Shift::getId))
-//                // join with ALL pieces of equipment
-//                .join(Equipment.class)
-//                .groupBy()
-//                .penalizeConfigurable("do not overbook Equipment");
-//    }
+    private Constraint doNotOverbookEquipment(ConstraintFactory factory) {
+        BiFunction<ShiftAssignment, Equipment, Integer> equipmentUsage = ((shiftAssignment, equipment) -> shiftAssignment.getEquipmentUsage(equipment));
+        return factory.from(Shift.class)
+                .join(Equipment)
+                .filter((shift, equipment, integer) -> {
+                    int length = shift.getLength();
+                    return integer > length;
+                })
+                .penalizeConfigurable("do not overbook Equipment");
+    }
 }

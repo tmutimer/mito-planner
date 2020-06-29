@@ -6,6 +6,7 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Objects;
 
 /**
@@ -94,5 +95,10 @@ public class ShiftAssignment {
             return null;
         }
         return getTask().getPerson();
+    }
+
+
+    public int getEquipmentUsage(Equipment equipment) {
+        return getTask().getRequiredEquipment().get(equipment);
     }
 }

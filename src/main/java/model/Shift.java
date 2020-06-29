@@ -1,5 +1,7 @@
 package model;
 
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Date;
 
 /**
@@ -33,5 +35,9 @@ public class Shift {
     @Override
     public String toString() {
         return "Shift at " + mStartTime;
+    }
+
+    public int getLength() {
+        return (int) mEndTime.toInstant().until(mStartTime.toInstant(), ChronoUnit.MINUTES);
     }
 }

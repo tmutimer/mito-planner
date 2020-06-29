@@ -45,6 +45,8 @@ public class ScheduleSolution {
     @ProblemFactCollectionProperty
     private List<Room> mRoomList;
     @ProblemFactCollectionProperty
+    private List<Equipment> mEquipmentList;
+    @ProblemFactCollectionProperty
     private List<Shift> mShiftList;
     @ProblemFactProperty
     private final int mTotalCapacity;
@@ -58,6 +60,7 @@ public class ScheduleSolution {
         mPersonList = data.getPersonList();
         mPiGroupList = data.getPiGroupList();
         mRoomList = data.getRoomList();
+        mEquipmentList = data.getEquipmentList();
         mShiftList = data.getShiftList();
         mTotalCapacity = data.getTotalCapacity();
         mAssignments = new ArrayList<>();
