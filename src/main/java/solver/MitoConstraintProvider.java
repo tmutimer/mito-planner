@@ -1,17 +1,10 @@
 package solver;
 
 import model.*;
-import org.optaplanner.core.api.function.QuadFunction;
-import org.optaplanner.core.api.function.ToIntTriFunction;
-import org.optaplanner.core.api.function.TriFunction;
 import org.optaplanner.core.api.function.TriPredicate;
 import org.optaplanner.core.api.score.stream.Constraint;
-import org.optaplanner.core.api.score.stream.ConstraintCollectors;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
-import org.optaplanner.core.api.score.stream.bi.BiConstraintCollector;
-import org.optaplanner.core.api.score.stream.bi.BiJoiner;
-import org.optaplanner.core.api.score.stream.tri.TriConstraintCollector;
 
 import java.util.function.*;
 
@@ -24,7 +17,8 @@ public class MitoConstraintProvider implements ConstraintProvider {
     public Constraint[] defineConstraints(ConstraintFactory factory) {
         return new Constraint[] {
                 doNotExceedRoomCapacity(factory),
-                doNotExceedEquipmentCapacity(factory),
+                // TODO will turn into doNotOverbookEquipment
+//                doNotExceedEquipmentCapacity(factory),
                 respectDueDates(factory),
                 scheduleHighPriorityTasks(factory),
                 schedulePiGroupsFairly(factory),
@@ -32,6 +26,7 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 // TODO this is still broken
                 doNotDoubleBookPerson(factory),
                 scheduleTasks(factory),
+                // TODO limits appear to be for  all time, not per week. May be a first fit issue.
                 doNotExceedLimit(factory)
                 // TODO finish adding the other constraints when you've created them
         };
@@ -45,11 +40,11 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 .penalizeConfigurable("Room capacity conflict");
     }
 
-    private Constraint doNotExceedEquipmentCapacity(ConstraintFactory factory) {
-        return factory.from(EquipmentShiftLink.class)
-                .filter(EquipmentShiftLink::isEquipmentOverCapacity)
-                .penalizeConfigurable("Equipment conflict");
-    }
+//    private Constraint doNotExceedEquipmentCapacity(ConstraintFactory factory) {
+//        return factory.from(EquipmentTaskLink.class)
+//                .filter(EquipmentTaskLink::isEquipmentOverCapacity)
+//                .penalizeConfigurable("Equipment conflict");
+//    }
 
     private Constraint respectDueDates(ConstraintFactory factory) {
         return factory.from(ShiftAssignment.class)
@@ -100,6 +95,20 @@ public class MitoConstraintProvider implements ConstraintProvider {
 //                .ifNotExists(ShiftAssignment.class, )
 //    }
 
+    private Constraint doNotOverbookEquipment(ConstraintFactory factory) {
+        return factory.from(ShiftAssignment.class)
+                .join(Shift.class, equal(ShiftAssignment::getShiftId, Shift::getId))
+                .join(Equipment.class)
+                .groupBy((shiftAssignment, shift, equipment) -> shift,
+                        (shiftAssignment, shift, equipment) -> equipment,
+                        sum((shiftAssignment, shift, equipment) -> shiftAssignment.getEquipmentUsage(equipment)))
+                .filter((shift, equipment, integer) -> {
+                    int length = shift.getLength();
+                    return integer > length;
+                })
+                .penalizeConfigurable("do not overbook Equipment");
+    }
+
     private Constraint doNotExceedLimit(ConstraintFactory factory) {
         TriPredicate<Person, Integer, Integer> exceedsLimit = ((person, week, shiftCount) -> shiftCount > person.getWeeklyShiftLimit());
         return factory.from(ShiftAssignment.class)
@@ -110,14 +119,4 @@ public class MitoConstraintProvider implements ConstraintProvider {
     }
 
     //TODO finish implementing this. Not currently working. Need to figure out how to join/groupby/filter/whatever else
-    private Constraint doNotOverbookEquipment(ConstraintFactory factory) {
-        BiFunction<ShiftAssignment, Equipment, Integer> equipmentUsage = ((shiftAssignment, equipment) -> shiftAssignment.getEquipmentUsage(equipment));
-        return factory.from(Shift.class)
-                .join(Equipment)
-                .filter((shift, equipment, integer) -> {
-                    int length = shift.getLength();
-                    return integer > length;
-                })
-                .penalizeConfigurable("do not overbook Equipment");
-    }
 }

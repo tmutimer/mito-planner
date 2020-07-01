@@ -44,12 +44,10 @@ public class MitoConstraintConfiguration {
     private final HardSoftScore mDueDateConflict = HardSoftScore.ofSoft(100);
 
     // people should not have more than their limit of assigned shifts per week
-    // TODO fix this, after limit is reached, tasks are not added in subsequent weeks
     @ConstraintWeight("Shift limit conflict")
     private final HardSoftScore mShiftLimitConflict = HardSoftScore.ofHard(30);
 
     // shift assignments should be fairly split between PI groups
-    // TODO look at 5.4.10 for implementing this - squared workload implementation
     @ConstraintWeight("PI group unfairness")
     private final HardSoftScore mPiGroupFairness = HardSoftScore.ofSoft(1);
 

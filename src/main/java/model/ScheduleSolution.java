@@ -15,9 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -51,8 +49,6 @@ public class ScheduleSolution {
     @ProblemFactProperty
     private final int mTotalCapacity;
 
-
-    // TODO implement model.Equipment
 
     public ScheduleSolution() throws Exception {
         ProblemData data = new ProblemData();
@@ -158,6 +154,26 @@ public class ScheduleSolution {
             }
         }
         return totalNumTasks - totalAssignedTasks;
+    }
+
+    public Set<Task> getUnassignedTasks() {
+        Set<Task> allTasks = new HashSet<>(mTaskList);
+        Set<Task> assignedTasks = new HashSet<>();
+        for (ShiftAssignment sa : mAssignments) {
+            if (sa.isTaskAssigned()) {
+                assignedTasks.add(sa.getTask());
+            }
+        }
+        allTasks.removeAll(assignedTasks);
+        return allTasks;
+    }
+
+    public void printAllUnassignedTasks() {
+        Set<Task> unassignedTasks = getUnassignedTasks();
+        System.out.println("UnassignedTaskCount: " + getNumberUnassignedTasks());
+        for (Task t : unassignedTasks) {
+            System.out.println(t);
+        }
     }
 
     // v CSV EXPORT METHODS v //

@@ -6,6 +6,10 @@ import org.optaplanner.core.api.solver.SolverFactory;
 import java.util.List;
 
 public class Main {
+    // TODO go through steps in 9.5
+    //  implement planning entity difficulty
+    //  implement first fit decreasing
+    //  add late acceptance
     private static final String SOLVER_CONFIG = "mitoScheduleSolver.xml";
 
     public static void main(String[] args) throws Exception {
@@ -36,6 +40,6 @@ public class Main {
             }
         }
         System.out.println("Shift assignment slots not used: " + nullCount);
-        System.out.println("Number of unassigned tasks: " + solution.getNumberUnassignedTasks());
+        solution.printAllUnassignedTasks();
     }
 }

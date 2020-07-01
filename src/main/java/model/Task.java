@@ -67,4 +67,17 @@ public class Task {
                 ", Due Date=" + mDueDate +
                 ", Priority=" + mPriority;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return mId == task.mId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mId);
+    }
 }
