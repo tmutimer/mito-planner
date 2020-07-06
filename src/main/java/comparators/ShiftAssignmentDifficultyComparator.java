@@ -1,4 +1,6 @@
-package model;
+package comparators;
+
+import model.ShiftAssignment;
 
 import java.io.Serializable;
 import java.util.Comparator;

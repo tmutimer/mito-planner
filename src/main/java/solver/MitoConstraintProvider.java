@@ -1,6 +1,7 @@
 package solver;
 
 import model.*;
+import org.optaplanner.core.api.domain.constraintweight.ConstraintWeight;
 import org.optaplanner.core.api.function.TriPredicate;
 import org.optaplanner.core.api.score.stream.Constraint;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
@@ -17,18 +18,19 @@ public class MitoConstraintProvider implements ConstraintProvider {
     public Constraint[] defineConstraints(ConstraintFactory factory) {
         return new Constraint[] {
                 doNotExceedRoomCapacity(factory),
-                // TODO will turn into doNotOverbookEquipment
-//                doNotExceedEquipmentCapacity(factory),
                 respectDueDates(factory),
+                // TODO may need to revisit de Smet's advice about implementing alongside other soft constraints.
                 scheduleHighPriorityTasks(factory),
                 schedulePiGroupsFairly(factory),
                 doNotRepeatTasks(factory),
-                // TODO this is still broken
                 doNotDoubleBookPerson(factory),
                 scheduleTasks(factory),
-                // TODO limits appear to be for  all time, not per week. May be a first fit issue.
+                // TODO this is currently penalizing every single case, even when all equipment usage 0.
+                doNotOverbookEquipment(factory),
+                // TODO limits appear to be for  all time, not per week. Not a first fit issue.
 //                doNotExceedLimit(factory)
-                // TODO finish adding the other constraints when you've created them
+                // TODO doNotOverbookRooms
+                // TODO honourPrecedingTasks
         };
     }
 
@@ -105,7 +107,7 @@ public class MitoConstraintProvider implements ConstraintProvider {
                     int length = shift.getLength();
                     return integer > length;
                 })
-                .penalizeConfigurable("do not overbook Equipment");
+                .penalizeConfigurable("Equipment conflict");
     }
 
     private Constraint doNotExceedLimit(ConstraintFactory factory) {

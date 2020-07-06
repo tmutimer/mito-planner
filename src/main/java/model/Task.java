@@ -51,6 +51,7 @@ public class Task {
     }
 
     public LinkedHashMap<Equipment, Integer> getRequiredEquipment() {
+        assert !Objects.isNull(mRequiredEquipment);
         return mRequiredEquipment;
     }
 

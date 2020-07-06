@@ -1,5 +1,7 @@
 package model;
 
+import comparators.ShiftAssignmentDifficultyComparator;
+import comparators.TaskStrengthComparator;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
@@ -9,7 +11,6 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.Objects;
 
 /**
@@ -104,7 +105,10 @@ public class ShiftAssignment {
 
 
     public int getEquipmentUsage(Equipment equipment) {
-        return getTask().getRequiredEquipment().get(equipment);
+//        if(isTaskAssigned()) {
+//            return getTask().getRequiredEquipment().getOrDefault(equipment, 0);
+//        }
+        return 0;
     }
 
     public static int getDifficulty(ShiftAssignment sa) {
