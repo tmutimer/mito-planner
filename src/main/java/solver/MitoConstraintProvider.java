@@ -27,12 +27,11 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 doNotDoubleBookPerson(factory),
                 scheduleTasks(factory),
                 // TODO limits appear to be for  all time, not per week. May be a first fit issue.
-                doNotExceedLimit(factory)
+//                doNotExceedLimit(factory)
                 // TODO finish adding the other constraints when you've created them
         };
     }
 
-    // using rewardConfigurable and penalizeConfigurable because I think this should link up to MitoConstraintConfiguration
 
     private Constraint doNotExceedRoomCapacity(ConstraintFactory factory) {
         return factory.from(RoomShiftLink.class)

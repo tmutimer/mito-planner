@@ -217,7 +217,8 @@ public class ProblemData {
 
         Date day = null;
         try {
-            day = sdf.parse("01072020");
+            // change the string here to determine where the generated shifts start
+            day = sdf.parse("01092020");
         } catch (ParseException e) {
             e.printStackTrace();
         }

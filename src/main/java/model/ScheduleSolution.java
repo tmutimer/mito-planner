@@ -1,5 +1,6 @@
 package model;
 
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.optaplanner.core.api.domain.constraintweight.ConstraintConfigurationProvider;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
@@ -28,8 +29,6 @@ public class ScheduleSolution {
     @ConstraintConfigurationProvider
     private final MitoConstraintConfiguration mConstraintConfiguration;
 
-    // The NurseRoster file annotates the fields, not the getters,
-    // even though the fields are private. Will do the same.
     @PlanningEntityCollectionProperty
     private List<ShiftAssignment> mAssignments;
 
@@ -48,6 +47,7 @@ public class ScheduleSolution {
     private List<Shift> mShiftList;
     @ProblemFactProperty
     private final int mTotalCapacity;
+
 
 
     public ScheduleSolution() throws Exception {
@@ -170,9 +170,26 @@ public class ScheduleSolution {
 
     public void printAllUnassignedTasks() {
         Set<Task> unassignedTasks = getUnassignedTasks();
-        System.out.println("UnassignedTaskCount: " + getNumberUnassignedTasks());
+        System.out.println("Number of unassigned tasks: " + getNumberUnassignedTasks());
         for (Task t : unassignedTasks) {
             System.out.println(t);
+        }
+    }
+
+    public void printPiGroupSplit() {
+        List<ShiftAssignment> assignments = getAssignments();
+        Map<PiGroup, MutableInt> piGroupDistribution = new HashMap<PiGroup, MutableInt>();
+        for (PiGroup piGroup: getPiGroupList()) {
+            piGroupDistribution.put(piGroup, new MutableInt(0));
+        }
+        for (ShiftAssignment sa : assignments) {
+            if (sa.isTaskAssigned()) {
+                MutableInt count = piGroupDistribution.get(sa.getPiGroup());
+                count.add(1);
+            }
+        }
+        for (PiGroup key : piGroupDistribution.keySet()) {
+            System.out.println(key.getName()  + ": " + piGroupDistribution.get(key));
         }
     }
 

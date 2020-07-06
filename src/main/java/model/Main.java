@@ -25,6 +25,8 @@ public class Main {
 
         System.out.println("Score: " + solvedSolution.getScore());
 
+        System.out.println(solver.explainBestScore());
+
         solvedSolution.writeAssignmentsToCsv();
 
     }
@@ -39,7 +41,15 @@ public class Main {
                 nullCount+= 1;
             }
         }
+        System.out.println();
         System.out.println("Shift assignment slots not used: " + nullCount);
+        System.out.println();
+        System.out.println("Assignments per PI Group:");
+        solution.printPiGroupSplit();
+        System.out.println();
         solution.printAllUnassignedTasks();
+        System.out.println();
+
+
     }
 }

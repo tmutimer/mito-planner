@@ -4,6 +4,9 @@ import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -14,8 +17,10 @@ import java.util.Objects;
  * There are as many model.ShiftAssignment instances per model.Shift instance as the Floor capacity.
  * Before planning, the task links are null, but the shift links are populated.
  */
-@PlanningEntity
+@PlanningEntity(difficultyComparatorClass = ShiftAssignmentDifficultyComparator.class)
 public class ShiftAssignment {
+    //TODO to expose this constant, may need to live in another class
+    private static final int TIME_UNTIL_SLOT_DIFFICULTY_WEIGHT = 1;
     @PlanningId
     private int mId;
 
@@ -47,7 +52,7 @@ public class ShiftAssignment {
     }
 
 
-    @PlanningVariable(valueRangeProviderRefs = {"taskList"}, nullable = true)
+    @PlanningVariable(valueRangeProviderRefs = {"taskList"}, nullable = true, strengthComparatorClass = TaskStrengthComparator.class)
     public Task getTask() {
         return mTask;
     }
@@ -100,5 +105,20 @@ public class ShiftAssignment {
 
     public int getEquipmentUsage(Equipment equipment) {
         return getTask().getRequiredEquipment().get(equipment);
+    }
+
+    public static int getDifficulty(ShiftAssignment sa) {
+        int totalDifficulty = 0;
+        int daysUntil = (int) ChronoUnit.DAYS.between(LocalDate.now(), sa.getShift().getStartTime().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate());
+
+        //minimum value is zero so that weird things won't happen when due date in the past
+        if (daysUntil < 0) {
+            daysUntil = 0;
+        }
+
+        totalDifficulty -= (TIME_UNTIL_SLOT_DIFFICULTY_WEIGHT * daysUntil);
+        return totalDifficulty;
     }
 }
