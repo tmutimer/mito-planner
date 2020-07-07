@@ -95,6 +95,15 @@ public class ShiftAssignment {
         return !Objects.isNull(mTask);
     }
 
+    public boolean isTaskAssignedWithPrecedingTask() {
+        if (!Objects.isNull(mTask)) {
+            if (!Objects.isNull(mTask.getPrecedingTaskId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public Person getPerson() {
         if (Objects.isNull(getTask())) {
@@ -124,5 +133,20 @@ public class ShiftAssignment {
 
         totalDifficulty -= (TIME_UNTIL_SLOT_DIFFICULTY_WEIGHT * daysUntil);
         return totalDifficulty;
+    }
+
+    public int getPrecedingTaskId() {
+        return mTask.getPrecedingTaskId();
+    }
+
+    public int getTaskId() {
+        return getTask().getId();
+    }
+
+    //TODO replace all usages of Date type with more appropriate type (LocalDate in UK timezone)
+    public LocalDate getShiftTime() {
+        return getShift().getStartTime().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
     }
 }

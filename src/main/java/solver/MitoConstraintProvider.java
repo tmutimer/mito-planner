@@ -1,17 +1,18 @@
 package solver;
 
 import model.*;
-import org.optaplanner.core.api.domain.constraintweight.ConstraintWeight;
 import org.optaplanner.core.api.function.TriPredicate;
 import org.optaplanner.core.api.score.stream.Constraint;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
 
-import java.util.function.*;
+import java.util.function.ToIntBiFunction;
+import java.util.function.ToIntFunction;
 
 import static org.optaplanner.core.api.score.stream.ConstraintCollectors.count;
 import static org.optaplanner.core.api.score.stream.ConstraintCollectors.sum;
 import static org.optaplanner.core.api.score.stream.Joiners.equal;
+import static org.optaplanner.core.api.score.stream.Joiners.lessThan;
 
 public class MitoConstraintProvider implements ConstraintProvider {
     @Override
@@ -30,7 +31,7 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 // TODO limits appear to be for  all time, not per week. Not a first fit issue.
 //                doNotExceedLimit(factory)
                 // TODO doNotOverbookRooms
-                // TODO honourPrecedingTasks
+                // TODO respectPrecedingTasks
         };
     }
 
@@ -119,5 +120,12 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 .penalizeConfigurable("Shift limit conflict");
     }
 
-    //TODO finish implementing this. Not currently working. Need to figure out how to join/groupby/filter/whatever else
+    private Constraint respectPrecedingTasks(ConstraintFactory factory) {
+        return factory.from(ShiftAssignment.class)
+                .filter(ShiftAssignment::isTaskAssignedWithPrecedingTask)
+                .ifNotExists(ShiftAssignment.class
+                        , equal(ShiftAssignment::getPrecedingTaskId, ShiftAssignment::getTaskId)
+                        , lessThan(ShiftAssignment::getShiftTime, ShiftAssignment::getShiftTime))
+                .penalizeConfigurable("Preceding task conflict");
+    }
 }
