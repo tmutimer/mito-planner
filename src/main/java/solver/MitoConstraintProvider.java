@@ -11,8 +11,7 @@ import java.util.function.ToIntFunction;
 
 import static org.optaplanner.core.api.score.stream.ConstraintCollectors.count;
 import static org.optaplanner.core.api.score.stream.ConstraintCollectors.sum;
-import static org.optaplanner.core.api.score.stream.Joiners.equal;
-import static org.optaplanner.core.api.score.stream.Joiners.lessThan;
+import static org.optaplanner.core.api.score.stream.Joiners.*;
 
 public class MitoConstraintProvider implements ConstraintProvider {
     @Override
@@ -125,7 +124,7 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 .filter(ShiftAssignment::isTaskAssignedWithPrecedingTask)
                 .ifNotExists(ShiftAssignment.class
                         , equal(ShiftAssignment::getPrecedingTaskId, ShiftAssignment::getTaskId)
-                        , lessThan(ShiftAssignment::getShiftTime, ShiftAssignment::getShiftTime))
+                        , greaterThan(ShiftAssignment::getShiftTime, ShiftAssignment::getShiftTime))
                 .penalizeConfigurable("Preceding task conflict");
     }
 }
