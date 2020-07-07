@@ -178,7 +178,7 @@ public class ProblemData {
                 //skip header
                 csvReader.readLine();
                 while ((row = csvReader.readLine()) != null) {
-                    String[] data = row.split(",");
+                    String[] data = row.split(",", -1);
                     int id = Integer.parseInt(data[0]);
                     String personString = data[1];
                     Person person = null;
@@ -194,8 +194,13 @@ public class ProblemData {
                         dueDate = new SimpleDateFormat("ddMMyyyy").parse(data[5]);
                     }
 
+                    Integer precedingTaskId = null;
+                    String precedingTaskString = data[7];
+                    if (!StringUtils.isEmpty(data[7])) {
+                        precedingTaskId = Integer.parseInt(data[7]);
+                    }
                     // TODO get equipment reading from tasks.csv
-                    Task task = new Task(id, person, name, dueDate, null, null, priority);
+                    Task task = new Task(id, precedingTaskId, person, name, dueDate, null, null, priority);
                     taskList.add(task);
                 }
             } catch (IOException e) {

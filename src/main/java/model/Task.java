@@ -10,6 +10,7 @@ import java.util.*;
  */
 public class Task {
     private final int mId;
+    private final Integer mPrecedingTaskId;
     private final Person mPerson;
     private final String mName;
     private final Date mDueDate;
@@ -21,8 +22,13 @@ public class Task {
     static int EQUIPMENT_TYPE_DIFFICULTY_WEIGHT = 1;
     static int DUE_DATE_DIFFICULTY_WEIGHT = 1;
 
-    public Task(int id, Person person, String name, Date dueDate, List<Room> rooms, LinkedHashMap<Equipment, Integer> equipment, int priority) {
+    public Task(int id, Integer precedingTaskId, Person person, String name, Date dueDate, List<Room> rooms, LinkedHashMap<Equipment, Integer> equipment, int priority) {
         mId = id;
+        Integer mPrecedingTaskIdTemp = null;
+        if (!Objects.isNull(precedingTaskId)) {
+            mPrecedingTaskIdTemp = precedingTaskId;
+        }
+        mPrecedingTaskId = mPrecedingTaskIdTemp;
         mPerson = person;
         mName = name;
         mDueDate = dueDate;
@@ -67,12 +73,21 @@ public class Task {
         return mName;
     }
 
+    public Integer getPrecedingTaskId() {
+        return mPrecedingTaskId;
+    }
+
+    public List<Room> getRequiredRooms() {
+        return mRequiredRooms;
+    }
+
     @Override
     public String toString() {
-        return  "Task name= " + mName +
+        return  "Task name=" + mName +
                 ", Person=" + mPerson +
                 ", Due Date=" + mDueDate +
-                ", Priority=" + mPriority;
+                ", Priority=" + mPriority +
+                ", PrecedingTask=" + mPrecedingTaskId;
     }
 
     @Override
@@ -98,7 +113,6 @@ public class Task {
         int typesOfEquipment = equipment.size();
         int daysUntilDue = 0;
 
-
         for (int time: equipment.values()) {
             totalEquipmentMinutes += time;
         }
@@ -109,9 +123,6 @@ public class Task {
         if (daysUntilDue < 0) {
             daysUntilDue = 0;
         }
-
-
-
 
         difficulty += typesOfEquipment * EQUIPMENT_TYPE_DIFFICULTY_WEIGHT;
         difficulty += totalEquipmentMinutes * EQUIPMENT_TIME_DIFFICULTY_WEIGHT;
