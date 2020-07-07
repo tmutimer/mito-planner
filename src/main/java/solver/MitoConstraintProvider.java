@@ -31,7 +31,7 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 // TODO limits appear to be for  all time, not per week. Not a first fit issue.
 //                doNotExceedLimit(factory)
                 // TODO doNotOverbookRooms
-                // TODO respectPrecedingTasks
+                respectPrecedingTasks(factory)
         };
     }
 

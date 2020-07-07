@@ -140,7 +140,10 @@ public class ShiftAssignment {
     }
 
     public int getTaskId() {
-        return getTask().getId();
+        if (isTaskAssigned()) {
+            return getTask().getId();
+        }
+        return -1;
     }
 
     //TODO replace all usages of Date type with more appropriate type (LocalDate in UK timezone)

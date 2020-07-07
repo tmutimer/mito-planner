@@ -32,6 +32,9 @@ public class MitoConstraintConfiguration {
     @ConstraintWeight("Do not double book people")
     private final HardSoftScore mPersonBookConflict = HardSoftScore.ofHard(10);
 
+    @ConstraintWeight("Preceding task conflict")
+    private final HardSoftScore mPrecedingTaskConflict = HardSoftScore.ofHard(10);
+
 
     // SOFT CONSTRAINTS //
 
