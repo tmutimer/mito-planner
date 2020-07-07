@@ -30,21 +30,21 @@ public class ScheduleSolution {
     private final MitoConstraintConfiguration mConstraintConfiguration;
 
     @PlanningEntityCollectionProperty
-    private List<ShiftAssignment> mAssignments;
+    private Set<ShiftAssignment> mAssignments;
 
     @ValueRangeProvider(id = "taskList")
     @ProblemFactCollectionProperty
-    private List<Task> mTaskList;
+    private Set<Task> mTaskSet;
     @ProblemFactCollectionProperty
-    private List<Person> mPersonList;
+    private Set<Person> mPersonSet;
     @ProblemFactCollectionProperty
-    private List<PiGroup> mPiGroupList;
+    private Set<PiGroup> mPiGroupSet;
     @ProblemFactCollectionProperty
-    private List<Room> mRoomList;
+    private Set<Room> mRoomSet;
     @ProblemFactCollectionProperty
-    private List<Equipment> mEquipmentList;
+    private Set<Equipment> mEquipmentSet;
     @ProblemFactCollectionProperty
-    private List<Shift> mShiftList;
+    private Set<Shift> mShiftSet;
     @ProblemFactProperty
     private final int mTotalCapacity;
 
@@ -52,16 +52,16 @@ public class ScheduleSolution {
 
     public ScheduleSolution() throws Exception {
         ProblemData data = new ProblemData();
-        mTaskList = data.getTaskList();
-        mPersonList = data.getPersonList();
-        mPiGroupList = data.getPiGroupList();
-        mRoomList = data.getRoomList();
-        mEquipmentList = data.getEquipmentList();
-        mShiftList = data.getShiftList();
+        mTaskSet = data.getTaskSet();
+        mPersonSet = data.getPersonSet();
+        mPiGroupSet = data.getPiGroupSet();
+        mRoomSet = data.getRoomSet();
+        mEquipmentSet = data.getEquipmentSet();
+        mShiftSet = data.getShiftSet();
         mTotalCapacity = data.getTotalCapacity();
-        mAssignments = new ArrayList<>();
+        mAssignments = new LinkedHashSet<>();
         //create the initialised shiftAssignments
-        for (Shift shift : mShiftList) {
+        for (Shift shift : mShiftSet) {
             // as many shift assignments per shift as there is capacity on the floor
             for (int i = 0 ; i < mTotalCapacity; i++) {
                 ShiftAssignment shiftAssignment = new ShiftAssignment(shift);
@@ -85,52 +85,52 @@ public class ScheduleSolution {
     // v GETTERS + SETTERS v //
 
 
-    public List<ShiftAssignment> getAssignments() {
+    public Set<ShiftAssignment> getAssignments() {
         return mAssignments;
     }
 
-    public void setAssignments(List<ShiftAssignment> assignments) {
+    public void setAssignments(Set<ShiftAssignment> assignments) {
         mAssignments = assignments;
     }
 
-    public List<Task> getTaskList() {
-        return mTaskList;
+    public Set<Task> getTaskSet() {
+        return mTaskSet;
     }
 
-    public void setTaskList(List<Task> taskList) {
-        mTaskList = taskList;
+    public void setTaskSet(Set<Task> taskSet) {
+        mTaskSet = taskSet;
     }
 
-    public List<Person> getPersonList() {
-        return mPersonList;
+    public Set<Person> getPersonSet() {
+        return mPersonSet;
     }
 
-    public void setPersonList(List<Person> personList) {
-        mPersonList = personList;
+    public void setPersonSet(Set<Person> personSet) {
+        mPersonSet = personSet;
     }
 
-    public List<PiGroup> getPiGroupList() {
-        return mPiGroupList;
+    public Set<PiGroup> getPiGroupSet() {
+        return mPiGroupSet;
     }
 
-    public void setPiGroupList(List<PiGroup> piGroupList) {
-        mPiGroupList = piGroupList;
+    public void setPiGroupSet(Set<PiGroup> piGroupSet) {
+        mPiGroupSet = piGroupSet;
     }
 
-    public List<Room> getRoomList() {
-        return mRoomList;
+    public Set<Room> getRoomSet() {
+        return mRoomSet;
     }
 
-    public void setRoomList(List<Room> roomList) {
-        mRoomList = roomList;
+    public void setRoomSet(Set<Room> roomSet) {
+        mRoomSet = roomSet;
     }
 
-    public List<Shift> getShiftList() {
-        return mShiftList;
+    public Set<Shift> getShiftSet() {
+        return mShiftSet;
     }
 
-    public void setShiftList(List<Shift> shiftList) {
-        mShiftList = shiftList;
+    public void setShiftSet(Set<Shift> shiftSet) {
+        mShiftSet = shiftSet;
     }
 
     public HardSoftScore getScore() {
@@ -144,9 +144,9 @@ public class ScheduleSolution {
     // v COMPLEX METHODS v //
 
     public int getNumberUnassignedTasks() {
-        int totalNumTasks = mTaskList.size();
+        int totalNumTasks = mTaskSet.size();
         int totalAssignedTasks = 0;
-        for (Task t : mTaskList) {
+        for (Task t : mTaskSet) {
             for (ShiftAssignment shiftAssignment : mAssignments) {
                 if (shiftAssignment.getTask() == t) {
                     totalAssignedTasks += 1;
@@ -157,7 +157,7 @@ public class ScheduleSolution {
     }
 
     public Set<Task> getUnassignedTasks() {
-        Set<Task> allTasks = new HashSet<>(mTaskList);
+        Set<Task> allTasks = new HashSet<>(mTaskSet);
         Set<Task> assignedTasks = new HashSet<>();
         for (ShiftAssignment sa : mAssignments) {
             if (sa.isTaskAssigned()) {
@@ -177,9 +177,9 @@ public class ScheduleSolution {
     }
 
     public void printPiGroupSplit() {
-        List<ShiftAssignment> assignments = getAssignments();
+        Set<ShiftAssignment> assignments = getAssignments();
         Map<PiGroup, MutableInt> piGroupDistribution = new HashMap<PiGroup, MutableInt>();
-        for (PiGroup piGroup: getPiGroupList()) {
+        for (PiGroup piGroup: getPiGroupSet()) {
             piGroupDistribution.put(piGroup, new MutableInt(0));
         }
         for (ShiftAssignment sa : assignments) {

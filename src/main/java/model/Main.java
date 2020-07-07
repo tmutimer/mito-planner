@@ -4,6 +4,7 @@ import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 
 import java.util.List;
+import java.util.Set;
 
 public class Main {
     // TODO go through steps in 9.5
@@ -32,7 +33,7 @@ public class Main {
     }
 
     public static void displaySolution(ScheduleSolution solution) {
-        List<ShiftAssignment> assignments = solution.getAssignments();
+        Set<ShiftAssignment> assignments = solution.getAssignments();
         int nullCount = 0;
         for (ShiftAssignment assignment: assignments) {
             if (assignment.isTaskAssigned()) {

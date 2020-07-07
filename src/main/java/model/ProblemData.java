@@ -16,28 +16,28 @@ public class ProblemData {
     // TODO figure out whether to implement this as HashSet,
     //  may depend how much comparisons are used during planning
     private final int mTotalCapacity;
-    private final List<Room> mRoomList;
-    private final List<Equipment> mEquipmentList;
-    private final List<Person> mPersonList;
-    private final List<Task> mTaskList;
-    private final List<PiGroup> mPiGroupList;
-    private final List<Shift> mShiftList;
+    private final Set<Room> mRoomSet;
+    private final Set<Equipment> mEquipmentSet;
+    private final Set<Person> mPersonSet;
+    private final Set<Task> mTaskSet;
+    private final Set<PiGroup> mPiGroupSet;
+    private final Set<Shift> mShiftSet;
 
     public ProblemData() throws Exception {
         // TODO make total capacity dynamic from the appropriate csv - maybe there should be a settings.txt file.
         mTotalCapacity = 50;
-        mRoomList = createRoomList();
-        mPiGroupList = createPiGroupList();
-        mEquipmentList = createEquipmentList();
-        mPersonList = createPersonList();
-        mTaskList = createTaskList();
-        mShiftList = createShiftList();
+        mRoomSet = createRoomSet();
+        mPiGroupSet = createPiGroupSet();
+        mEquipmentSet = createEquipmentSet();
+        mPersonSet = createPersonSet();
+        mTaskSet = createTaskSet();
+        mShiftSet = createShiftSet();
     }
 
     // TODO add validations as per model.Person
     // model.Room //
-    public List<Room> createRoomList() {
-        List<Room> roomList = new ArrayList<>();
+    public Set<Room> createRoomSet() {
+        Set<Room> roomSet = new LinkedHashSet<>();
         BufferedReader csvReader;
         {
             try {
@@ -51,9 +51,9 @@ public class ProblemData {
                     String name = data[1];
                     int capacity = Integer.parseInt(data[3]);
                     Room room = new Room(id, name, capacity);
-                    roomList.add(room);
+                    roomSet.add(room);
                 }
-//                for (Room r : roomList) {
+//                for (Room r : roomSet) {
 //                    System.out.println(r);
 //                }
             } catch (IOException e) {
@@ -61,13 +61,13 @@ public class ProblemData {
             }
         }
 
-        return roomList;
+        return roomSet;
     }
 
     // TODO see if any validations are needed
     // model.Equipment //
-    public List<Equipment> createEquipmentList() {
-        List<Equipment> equipmentList = new ArrayList<>();
+    public Set<Equipment> createEquipmentSet() {
+        Set<Equipment> equipmentSet = new LinkedHashSet<>();
         BufferedReader csvReader;
         {
             try {
@@ -81,18 +81,18 @@ public class ProblemData {
                     String name = data[1];
                     int quantity = Integer.parseInt(data[4]);
                     Equipment equipment = new Equipment(id, name, quantity);
-                    equipmentList.add(equipment);
+                    equipmentSet.add(equipment);
                 }
                 csvReader.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return equipmentList;
+        return equipmentSet;
     }
 
-    public List<PiGroup> createPiGroupList() {
-        List<PiGroup> piGroupList = new ArrayList<>();
+    public Set<PiGroup> createPiGroupSet() {
+        Set<PiGroup> piGroupSet = new LinkedHashSet<>();
         BufferedReader csvReader;
         {
             try {
@@ -105,18 +105,18 @@ public class ProblemData {
                     int id = Integer.parseInt(data[0]);
                     String name = data[1];
                     PiGroup piGroup = new PiGroup(name);
-                    piGroupList.add(piGroup);
+                    piGroupSet.add(piGroup);
                 }
                 csvReader.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return piGroupList;
+        return piGroupSet;
     }
 
-    public List<Person> createPersonList() throws Exception {
-        List<Person> personList = new ArrayList<>();
+    public Set<Person> createPersonSet() throws Exception {
+        Set<Person> personSet = new LinkedHashSet<>();
         BufferedReader csvReader;
         {
             try {
@@ -132,7 +132,7 @@ public class ProblemData {
                     PiGroup piGroup = null;
 
                     // get PI group
-                    for (PiGroup g : mPiGroupList) {
+                    for (PiGroup g : mPiGroupSet) {
                         if (piGroupName.equals(g.getName())) {
                             piGroup = g;
                         }
@@ -142,7 +142,7 @@ public class ProblemData {
                     Room office = null;
 
                     // get office
-                    for (Room r : mRoomList) {
+                    for (Room r : mRoomSet) {
                         String roomName = r.getRoomName();
                         if (officeName.equals(r.getRoomName())) {
                             office = r;
@@ -159,17 +159,17 @@ public class ProblemData {
                     }
 
                     Person person = new Person(id, name, office, piGroup, weeklyShiftLimit);
-                    personList.add(person);
+                    personSet.add(person);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return personList;
+        return personSet;
     }
 
-    public List<Task> createTaskList() throws ParseException {
-        List<Task> taskList = new ArrayList<>();
+    public Set<Task> createTaskSet() throws ParseException {
+        Set<Task> taskSet = new LinkedHashSet<>();
         BufferedReader csvReader;
         {
             try {
@@ -182,7 +182,7 @@ public class ProblemData {
                     int id = Integer.parseInt(data[0]);
                     String personString = data[1];
                     Person person = null;
-                    for (Person p : mPersonList) {
+                    for (Person p : mPersonSet) {
                         if (p.getName().equals(personString)) {
                             person = p;
                         }
@@ -201,20 +201,20 @@ public class ProblemData {
                     }
                     // TODO get equipment reading from tasks.csv
                     Task task = new Task(id, precedingTaskId, person, name, dueDate, null, null, priority);
-                    taskList.add(task);
+                    taskSet.add(task);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return taskList;
+        return taskSet;
 
     }
 
     // Currently returns a list of 100 shifts, starting from the 1st of july, every day for 50 days, 7am-12pm, 1pm-6pm
     @SuppressWarnings("SpellCheckingInspection")
-    public List<Shift> createShiftList() {
-        List<Shift> shiftList = new ArrayList<>();
+    public Set<Shift> createShiftSet() {
+        Set<Shift> shiftSet = new LinkedHashSet<>();
         List<Shift> startList = new ArrayList<>();
         List<Shift> endList = new ArrayList<>();
 
@@ -252,36 +252,36 @@ public class ProblemData {
             eveningStart.add(Calendar.DAY_OF_YEAR, 1);
             eveningEnd.add(Calendar.DAY_OF_YEAR, 1);
 
-            shiftList.add(morningShift);
-            shiftList.add(eveningShift);
+            shiftSet.add(morningShift);
+            shiftSet.add(eveningShift);
 
         }
 
-        return shiftList;
+        return shiftSet;
     }
 
-    public List<Room> getRoomList() {
-        return mRoomList;
+    public Set<Room> getRoomSet() {
+        return mRoomSet;
     }
 
-    public List<Equipment> getEquipmentList() {
-        return mEquipmentList;
+    public Set<Equipment> getEquipmentSet() {
+        return mEquipmentSet;
     }
 
-    public List<Person> getPersonList() {
-        return mPersonList;
+    public Set<Person> getPersonSet() {
+        return mPersonSet;
     }
 
-    public List<Task> getTaskList() {
-        return mTaskList;
+    public Set<Task> getTaskSet() {
+        return mTaskSet;
     }
 
-    public List<PiGroup> getPiGroupList() {
-        return mPiGroupList;
+    public Set<PiGroup> getPiGroupSet() {
+        return mPiGroupSet;
     }
 
-    public List<Shift> getShiftList() {
-        return mShiftList;
+    public Set<Shift> getShiftSet() {
+        return mShiftSet;
     }
 
     public int getTotalCapacity() {
