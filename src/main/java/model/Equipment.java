@@ -30,4 +30,10 @@ public class Equipment {
     public int getNumberOfEquipment() {
         return mNumberOfEquipment;
     }
+
+    @Override
+    public String toString() {
+        return "Equipment: " + mName;
+    }
+
 }

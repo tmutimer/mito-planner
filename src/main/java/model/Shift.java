@@ -38,6 +38,6 @@ public class Shift {
     }
 
     public int getLength() {
-        return (int) mEndTime.toInstant().until(mStartTime.toInstant(), ChronoUnit.MINUTES);
+        return (int) mStartTime.toInstant().until(mEndTime.toInstant(), ChronoUnit.MINUTES);
     }
 }
