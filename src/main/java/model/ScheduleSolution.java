@@ -34,17 +34,17 @@ public class ScheduleSolution {
 
     @ValueRangeProvider(id = "taskList")
     @ProblemFactCollectionProperty
-    private Set<Task> mTaskSet;
+    private List<Task> mTaskSet;
     @ProblemFactCollectionProperty
-    private Set<Person> mPersonSet;
+    private List<Person> mPersonSet;
     @ProblemFactCollectionProperty
-    private Set<PiGroup> mPiGroupSet;
+    private List<PiGroup> mPiGroupSet;
     @ProblemFactCollectionProperty
-    private Set<Room> mRoomSet;
+    private List<Room> mRoomSet;
     @ProblemFactCollectionProperty
-    private Set<Equipment> mEquipmentSet;
+    private List<Equipment> mEquipmentSet;
     @ProblemFactCollectionProperty
-    private Set<Shift> mShiftSet;
+    private List<Shift> mShiftSet;
     @ProblemFactProperty
     private final int mTotalCapacity;
 
@@ -52,12 +52,12 @@ public class ScheduleSolution {
 
     public ScheduleSolution() throws Exception {
         ProblemData data = new ProblemData();
-        mTaskSet = data.getTaskSet();
-        mPersonSet = data.getPersonSet();
-        mPiGroupSet = data.getPiGroupSet();
-        mRoomSet = data.getRoomSet();
-        mEquipmentSet = data.getEquipmentSet();
-        mShiftSet = data.getShiftSet();
+        mTaskSet = data.getTaskList();
+        mPersonSet = data.getPersonList();
+        mPiGroupSet = data.getPiGroupList();
+        mRoomSet = data.getRoomList();
+        mEquipmentSet = data.getEquipmentList();
+        mShiftSet = data.getShiftList();
         mTotalCapacity = data.getTotalCapacity();
         mAssignments = new LinkedHashSet<>();
         //create the initialised shiftAssignments
@@ -84,6 +84,9 @@ public class ScheduleSolution {
 
     // v GETTERS + SETTERS v //
 
+    public MitoConstraintConfiguration getConstraintConfiguration() {
+        return mConstraintConfiguration;
+    }
 
     public Set<ShiftAssignment> getAssignments() {
         return mAssignments;
@@ -93,53 +96,58 @@ public class ScheduleSolution {
         mAssignments = assignments;
     }
 
-    public Set<Task> getTaskSet() {
+    public List<Task> getTaskSet() {
         return mTaskSet;
     }
 
-    public void setTaskSet(Set<Task> taskSet) {
+    public void setTaskSet(List<Task> taskSet) {
         mTaskSet = taskSet;
     }
 
-    public Set<Person> getPersonSet() {
+    public List<Person> getPersonSet() {
         return mPersonSet;
     }
 
-    public void setPersonSet(Set<Person> personSet) {
+    public void setPersonSet(List<Person> personSet) {
         mPersonSet = personSet;
     }
 
-    public Set<PiGroup> getPiGroupSet() {
+    public List<PiGroup> getPiGroupSet() {
         return mPiGroupSet;
     }
 
-    public void setPiGroupSet(Set<PiGroup> piGroupSet) {
+    public void setPiGroupSet(List<PiGroup> piGroupSet) {
         mPiGroupSet = piGroupSet;
     }
 
-    public Set<Room> getRoomSet() {
+    public List<Room> getRoomSet() {
         return mRoomSet;
     }
 
-    public void setRoomSet(Set<Room> roomSet) {
+    public void setRoomSet(List<Room> roomSet) {
         mRoomSet = roomSet;
     }
 
-    public Set<Shift> getShiftSet() {
+    public List<Equipment> getEquipmentSet() {
+        return mEquipmentSet;
+    }
+
+    public void setEquipmentSet(List<Equipment> equipmentSet) {
+        mEquipmentSet = equipmentSet;
+    }
+
+    public List<Shift> getShiftSet() {
         return mShiftSet;
     }
 
-    public void setShiftSet(Set<Shift> shiftSet) {
+    public void setShiftSet(List<Shift> shiftSet) {
         mShiftSet = shiftSet;
     }
 
-    public HardSoftScore getScore() {
-        return mScore;
+    public int getTotalCapacity() {
+        return mTotalCapacity;
     }
 
-    public void setScore(HardSoftScore score) {
-        mScore = score;
-    }
 
     // v COMPLEX METHODS v //
 
