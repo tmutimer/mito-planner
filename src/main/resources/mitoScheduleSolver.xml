@@ -24,6 +24,7 @@
 
     <termination>
         <secondsSpentLimit>30</secondsSpentLimit>
+        <unimprovedSpentLimit>PT1M</unimprovedSpentLimit>
     </termination>
 
 </solver>

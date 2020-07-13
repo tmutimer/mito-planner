@@ -25,10 +25,10 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 doNotRepeatTasks(factory),
                 doNotDoubleBookPerson(factory),
                 scheduleTasks(factory),
-                // TODO this is currently penalizing every single case, even when all equipment usage 0.
                 doNotOverbookEquipment(factory),
                 // TODO limits appear to be for  all time, not per week. Not a first fit issue.
-//                doNotExceedLimit(factory)
+                doNotExceedLimit(factory),
+                scheduleTasksWithDueDates(factory),
                 // TODO doNotOverbookRooms
                 respectPrecedingTasks(factory)
         };
@@ -47,11 +47,17 @@ public class MitoConstraintProvider implements ConstraintProvider {
 //                .penalizeConfigurable("Equipment conflict");
 //    }
 
+    private Constraint scheduleTasksWithDueDates(ConstraintFactory factory) {
+        return factory.from(ShiftAssignment.class)
+                .filter(ShiftAssignment::isTaskAssignedWithDueDate)
+                .rewardConfigurable("Schedule tasks with due dates");
+    }
+
     private Constraint respectDueDates(ConstraintFactory factory) {
         return factory.from(ShiftAssignment.class)
                 .filter(ShiftAssignment::isTaskAssigned)
-                .filter(ShiftAssignment::isTaskAssignedByDueDate)
-                .rewardConfigurable("Meet due dates");
+                .filter(ShiftAssignment::hasTaskMissedDueDate)
+                .penalizeConfigurable("Due date conflict");
     }
 
     private Constraint scheduleHighPriorityTasks(ConstraintFactory factory) {
@@ -116,6 +122,14 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 .filter(ShiftAssignment::isTaskAssigned)
                 .groupBy(ShiftAssignment::getPerson, ShiftAssignment::getWeek, count())
                 .filter(exceedsLimit)
+                //debugging filter
+//                .filter(((person, integer, integer2) -> {
+//                    System.out.println("Person: " + person.toString() + ". Week " + integer + ", Count: " + integer2);
+//                    if (integer2 > person.getWeeklyShiftLimit()) {
+//                        System.out.println("Count of " + integer2 + " exceeds limit of " + person.getWeeklyShiftLimit());
+//                    }
+//                    return integer2 > person.getWeeklyShiftLimit();
+//                }))
                 .penalizeConfigurable("Shift limit conflict");
     }
 

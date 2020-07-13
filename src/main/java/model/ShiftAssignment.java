@@ -62,12 +62,12 @@ public class ShiftAssignment {
         mTask = task;
     }
 
-    public boolean isTaskAssignedByDueDate() {
+    public boolean hasTaskMissedDueDate() {
 
         if (Objects.isNull(mTask) || Objects.isNull(mTask.getDueDate())) {
             return false;
         }
-        return mShift.getStartTime().before(mTask.getDueDate());
+        return !mShift.getStartTime().before(mTask.getDueDate());
     }
 
     public PiGroup getPiGroup() {
@@ -81,7 +81,7 @@ public class ShiftAssignment {
         Date date = getShift().getStartTime();
         Calendar c = Calendar.getInstance();
         c.setTime(date);
-        return Calendar.WEEK_OF_YEAR;
+        return c.get(Calendar.WEEK_OF_YEAR);
     }
 
 
@@ -151,5 +151,9 @@ public class ShiftAssignment {
         return getShift().getStartTime().toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
+    }
+
+    public boolean isTaskAssignedWithDueDate() {
+        return isTaskAssigned() && mTask.hasDueDate();
     }
 }

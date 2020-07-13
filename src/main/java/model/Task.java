@@ -20,7 +20,7 @@ public class Task {
 
     static int EQUIPMENT_TIME_DIFFICULTY_WEIGHT = 1;
     static int EQUIPMENT_TYPE_DIFFICULTY_WEIGHT = 1;
-    static int DUE_DATE_DIFFICULTY_WEIGHT = 1;
+    static int DUE_DATE_DIFFICULTY_WEIGHT = 4;
 
     public Task(int id, Integer precedingTaskId, Person person, String name, Date dueDate, List<Room> rooms, LinkedHashMap<Equipment, Integer> equipment, int priority) {
         mId = id;
@@ -132,5 +132,9 @@ public class Task {
 
     public static int getIdStatic(Task t) {
         return t.getId();
+    }
+
+    public boolean hasDueDate() {
+        return Objects.nonNull(mDueDate);
     }
 }
