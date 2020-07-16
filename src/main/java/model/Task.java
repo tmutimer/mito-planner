@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -15,7 +16,7 @@ public class Task {
     private final Person mPerson;
     private final String mName;
     private final int mDuration;
-    private final Date mDueDate;
+    private final LocalDateTime mDueDate;
     private final List<Room> mRequiredRooms;
     private final List<Equipment> mRequiredEquipment;
     private final int mPriority;
@@ -24,7 +25,7 @@ public class Task {
     static final int EQUIPMENT_TYPE_DIFFICULTY_WEIGHT = 1;
     static final int DUE_DATE_DIFFICULTY_WEIGHT = 2000;
 
-    public Task(int id, Integer precedingTaskId,  boolean immediatelyFollowsPrecedingTask, Person person, String name, int duration, Date dueDate, List<Room> rooms, List<Equipment> equipment, int priority) {
+    public Task(int id, Integer precedingTaskId,  boolean immediatelyFollowsPrecedingTask, Person person, String name, int duration, LocalDateTime dueDate, List<Room> rooms, List<Equipment> equipment, int priority) {
         mId = id;
         mDuration = duration;
         mImmediatelyFollowsPrecedingTask = immediatelyFollowsPrecedingTask;
@@ -68,7 +69,7 @@ public class Task {
         return mRequiredEquipment;
     }
 
-    public Date getDueDate() {
+    public LocalDateTime getDueDate() {
         return mDueDate;
     }
 
@@ -126,7 +127,7 @@ public class Task {
 
         difficulty += t.getDuration();
 
-        daysUntilDue = (int) ChronoUnit.DAYS.between(LocalDate.now(), t.getDueDate().toInstant());
+        daysUntilDue = (int) ChronoUnit.DAYS.between(LocalDate.now(), t.getDueDate());
 
         //minimum value is zero so that weird things won't happen when due date in the past
         if (daysUntilDue < 0) {

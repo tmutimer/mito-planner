@@ -1,5 +1,6 @@
 package model;
 
+// TODO may be able to delete this
 public class RoomShiftLink {
     private Shift mShift;
     private Room mRoom;

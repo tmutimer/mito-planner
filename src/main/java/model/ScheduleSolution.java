@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -219,8 +220,8 @@ public class ScheduleSolution {
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         String row = null;
 
-        Date startDate = assignment.getShift().getStartTime();
-        Date endDate = assignment.getShift().getEndTime();
+        LocalDateTime startDate = assignment.getShift().getStartTime();
+        LocalDateTime endDate = assignment.getShift().getEndTime();
 
         String startDateString = dateFormat.format(startDate);
         String startTimeString = timeFormat.format(startDate);

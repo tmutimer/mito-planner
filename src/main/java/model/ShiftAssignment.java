@@ -7,10 +7,14 @@ import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -67,7 +71,7 @@ public class ShiftAssignment {
         if (Objects.isNull(mTask) || Objects.isNull(mTask.getDueDate())) {
             return false;
         }
-        return !mShift.getStartTime().before(mTask.getDueDate());
+        return !mShift.getStartTime().isBefore(mTask.getDueDate());
     }
 
     public PiGroup getPiGroup() {
@@ -78,10 +82,9 @@ public class ShiftAssignment {
     }
 
     public int getWeek() {
-        Date date = getShift().getStartTime();
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        return c.get(Calendar.WEEK_OF_YEAR);
+        LocalDateTime date = getShift().getStartTime();
+        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
+        return date.get(woy);
     }
 
 
@@ -120,9 +123,7 @@ public class ShiftAssignment {
 
     public static int getDifficulty(ShiftAssignment sa) {
         int totalDifficulty = 0;
-        int daysUntil = (int) ChronoUnit.DAYS.between(LocalDate.now(), sa.getShift().getStartTime().toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate());
+        int daysUntil = (int) ChronoUnit.DAYS.between(LocalDate.now(), sa.getShift().getStartTime());
 
         //minimum value is zero so that weird things won't happen when due date in the past
         if (daysUntil < 0) {
@@ -144,11 +145,8 @@ public class ShiftAssignment {
         return -1;
     }
 
-    //TODO replace all usages of Date type with more appropriate type (LocalDate in UK timezone)
-    public LocalDate getShiftTime() {
-        return getShift().getStartTime().toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
+    public LocalDateTime getShiftTime() {
+        return getShift().getStartTime();
     }
 
     public boolean isTaskAssignedWithDueDate() {

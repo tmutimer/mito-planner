@@ -1,5 +1,7 @@
 package model;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Date;
@@ -9,22 +11,22 @@ import java.util.Date;
  * which does not change during planning.
  */
 public class Shift {
-    private final Date mStartTime;
-    private final Date mEndTime;
+    private final LocalDateTime mStartTime;
+    private final LocalDateTime mEndTime;
     private final int mId;
     private static int sIdCounter = 0;
 
-    public Shift(Date startTime, Date endTime) {
+    public Shift(LocalDateTime startTime, LocalDateTime endTime) {
         mId = ++sIdCounter;
         mStartTime = startTime;
         mEndTime = endTime;
     }
 
-    public Date getStartTime() {
+    public LocalDateTime getStartTime() {
         return mStartTime;
     }
 
-    public Date getEndTime() {
+    public LocalDateTime getEndTime() {
         return mEndTime;
     }
 
@@ -37,7 +39,8 @@ public class Shift {
         return "Shift at " + mStartTime;
     }
 
+    /** @return the duration of the shift as an integer number of minutes */
     public int getLength() {
-        return (int) mStartTime.toInstant().until(mEndTime.toInstant(), ChronoUnit.MINUTES);
+        return (int) mStartTime.until(mEndTime, ChronoUnit.MINUTES);
     }
 }

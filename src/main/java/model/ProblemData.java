@@ -7,6 +7,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 /**
@@ -76,8 +80,8 @@ public class ProblemData {
                 }
             }
 
-            Date dueDate = null;
-            List<Date>dateOptions = new ArrayList<>();
+            LocalDateTime dueDate = null;
+            List<LocalDateTime>dateOptions = new ArrayList<>();
             for(Shift s : mShiftList) {
                 dateOptions.add(s.getStartTime());
             }
@@ -86,9 +90,9 @@ public class ProblemData {
             if (random.nextInt(10) >= 7) {
                 if (Objects.isNull(precedingTask)) dueDate = dateOptions.get(random.nextInt(dateOptions.size()));
                 else if (Objects.nonNull(precedingTask.getDueDate())) {
-                    ArrayList<Date> dateOptionsConstrained = new ArrayList<>();
-                    for (Date d : dateOptions) {
-                        if (d.after(precedingTask.getDueDate())) {
+                    ArrayList<LocalDateTime> dateOptionsConstrained = new ArrayList<>();
+                    for (LocalDateTime d : dateOptions) {
+                        if (d.isAfter(precedingTask.getDueDate())) {
                             dateOptionsConstrained.add(d);
                         }
                     }
@@ -271,7 +275,7 @@ public class ProblemData {
         return personList;
     }
 
-    public List<Task> createTaskList() throws ParseException {
+    public List<Task> createTaskList() throws DateTimeParseException {
         List<Task> taskList = new ArrayList<>();
         BufferedReader csvReader;
         {
@@ -292,9 +296,9 @@ public class ProblemData {
                     }
                     String name = data[2];
                     int priority = Integer.parseInt(data[6]);
-                    Date dueDate = null;
+                    LocalDateTime dueDate = null;
                     if (!StringUtils.isEmpty(data[5])) {
-                        dueDate = new SimpleDateFormat("ddMMyyyy").parse(data[5]);
+                        dueDate = LocalDateTime.parse(data[5], DateTimeFormatter.ofPattern("ddMMyyyy"));
                     }
 
                     int duration = Integer.parseInt(data[3]);
@@ -349,11 +353,11 @@ public class ProblemData {
 
         for (int i = 0; i < 50; i++) {
 
-            Shift morningShift = new Shift(morningStart.getTime(), morningEnd.getTime());
+            Shift morningShift = new Shift(morningStart.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(), morningEnd.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
             morningStart.add(Calendar.DAY_OF_YEAR, 1);
             morningEnd.add(Calendar.DAY_OF_YEAR, 1);
 
-            Shift eveningShift = new Shift(eveningStart.getTime(), eveningEnd.getTime());
+            Shift eveningShift = new Shift(eveningStart.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(), eveningEnd.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
             eveningStart.add(Calendar.DAY_OF_YEAR, 1);
             eveningEnd.add(Calendar.DAY_OF_YEAR, 1);
 
