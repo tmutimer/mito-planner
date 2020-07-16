@@ -26,6 +26,8 @@ public class ProblemData {
     private final List<Task> mTaskList;
     private final List<PiGroup> mPiGroupList;
     private final List<Shift> mShiftList;
+    private final List<Timeslot> mTimeslotList;
+    private final List<TimeslotAssignment> mTimeslotAssignmentList;
 
     public ProblemData() throws Exception {
         // TODO make total capacity dynamic from the appropriate csv - maybe there should be a settings.txt file.
@@ -36,9 +38,33 @@ public class ProblemData {
         mPersonList = createPersonList();
         mTaskList = createTaskList();
         mShiftList = createShiftList();
+        mTimeslotList = createTimeslotList();
+        mTimeslotAssignmentList = createTimeslotAssignmentList();
     }
 
-// WORKING ON THIS TO GENERATE LARGE TASK LISTS
+    private List<TimeslotAssignment> createTimeslotAssignmentList() {
+        List<TimeslotAssignment> timeslotAssignments = new ArrayList<>();
+        for (int i = 0; i < mTotalCapacity; i++) {
+            for (Timeslot ts : mTimeslotList) {
+                timeslotAssignments.add(new TimeslotAssignment(ts));
+            }
+        }
+        return timeslotAssignments;
+    }
+
+    private List<Timeslot> createTimeslotList() {
+        List<Timeslot> slotList = new ArrayList<>();
+        for (Shift s : mShiftList) {
+            slotList.addAll(Timeslot.slotsFromShift(s));
+        }
+        return slotList;
+    }
+
+    public List<Timeslot> getTimeslotList() {
+        return mTimeslotList;
+    }
+
+    // WORKING ON THIS TO GENERATE LARGE TASK LISTS
     public List<Task> generateTaskList(int numTasks) {
         Random random = new Random();
         int id_counter = 0;
@@ -395,5 +421,9 @@ public class ProblemData {
 
     public int getTotalCapacity() {
         return mTotalCapacity;
+    }
+
+    public List<TimeslotAssignment> getTimeslotAssignmentList() {
+        return mTimeslotAssignmentList;
     }
 }

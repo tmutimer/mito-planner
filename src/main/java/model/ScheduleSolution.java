@@ -31,21 +31,23 @@ public class ScheduleSolution {
     private final MitoConstraintConfiguration mConstraintConfiguration;
 
     @PlanningEntityCollectionProperty
-    private Set<ShiftAssignment> mAssignments;
+    private List<TimeslotAssignment> mAssignments;
 
     @ValueRangeProvider(id = "taskList")
     @ProblemFactCollectionProperty
-    private List<Task> mTaskSet;
+    private List<Task> mTaskList;
     @ProblemFactCollectionProperty
-    private List<Person> mPersonSet;
+    private List<Person> mPersonList;
     @ProblemFactCollectionProperty
-    private List<PiGroup> mPiGroupSet;
+    private List<PiGroup> mPiGroupList;
     @ProblemFactCollectionProperty
-    private List<Room> mRoomSet;
+    private List<Room> mRoomList;
     @ProblemFactCollectionProperty
-    private List<Equipment> mEquipmentSet;
+    private List<Equipment> mEquipmentList;
     @ProblemFactCollectionProperty
-    private List<Shift> mShiftSet;
+    private List<Shift> mShiftList;
+    @ProblemFactCollectionProperty
+    private List<Timeslot> mTimeslotList;
     @ProblemFactProperty
     private final int mTotalCapacity;
 
@@ -54,24 +56,17 @@ public class ScheduleSolution {
     public ScheduleSolution() throws Exception {
         ProblemData data = new ProblemData();
         // for small task list
-//        mTaskSet = data.getTaskList();
+//        mTaskList = data.getTaskList();
         // for larger randomised data
-        mTaskSet = data.generateTaskList(200);
-        mPersonSet = data.getPersonList();
-        mPiGroupSet = data.getPiGroupList();
-        mRoomSet = data.getRoomList();
-        mEquipmentSet = data.getEquipmentList();
-        mShiftSet = data.getShiftList();
+        mTaskList = data.generateTaskList(200);
+        mPersonList = data.getPersonList();
+        mPiGroupList = data.getPiGroupList();
+        mRoomList = data.getRoomList();
+        mEquipmentList = data.getEquipmentList();
+        mShiftList = data.getShiftList();
         mTotalCapacity = data.getTotalCapacity();
-        mAssignments = new LinkedHashSet<>();
-        //create the initialised shiftAssignments
-        for (Shift shift : mShiftSet) {
-            // as many shift assignments per shift as there is capacity on the floor
-            for (int i = 0 ; i < mTotalCapacity; i++) {
-                ShiftAssignment shiftAssignment = new ShiftAssignment(shift);
-                mAssignments.add(shiftAssignment);
-            }
-        }
+        mTimeslotList = data.getTimeslotList();
+        mAssignments = data.getTimeslotAssignmentList();
         mConstraintConfiguration = new MitoConstraintConfiguration();
     }
 
@@ -92,60 +87,60 @@ public class ScheduleSolution {
         return mConstraintConfiguration;
     }
 
-    public Set<ShiftAssignment> getAssignments() {
+    public List<TimeslotAssignment> getAssignments() {
         return mAssignments;
     }
 
-    public void setAssignments(Set<ShiftAssignment> assignments) {
+    public void setAssignments(List<TimeslotAssignment> assignments) {
         mAssignments = assignments;
     }
 
-    public List<Task> getTaskSet() {
-        return mTaskSet;
+    public List<Task> getTaskList() {
+        return mTaskList;
     }
 
-    public void setTaskSet(List<Task> taskSet) {
-        mTaskSet = taskSet;
+    public void setTaskList(List<Task> taskList) {
+        mTaskList = taskList;
     }
 
-    public List<Person> getPersonSet() {
-        return mPersonSet;
+    public List<Person> getPersonList() {
+        return mPersonList;
     }
 
-    public void setPersonSet(List<Person> personSet) {
-        mPersonSet = personSet;
+    public void setPersonList(List<Person> personList) {
+        mPersonList = personList;
     }
 
-    public List<PiGroup> getPiGroupSet() {
-        return mPiGroupSet;
+    public List<PiGroup> getPiGroupList() {
+        return mPiGroupList;
     }
 
-    public void setPiGroupSet(List<PiGroup> piGroupSet) {
-        mPiGroupSet = piGroupSet;
+    public void setPiGroupList(List<PiGroup> piGroupList) {
+        mPiGroupList = piGroupList;
     }
 
-    public List<Room> getRoomSet() {
-        return mRoomSet;
+    public List<Room> getRoomList() {
+        return mRoomList;
     }
 
-    public void setRoomSet(List<Room> roomSet) {
-        mRoomSet = roomSet;
+    public void setRoomList(List<Room> roomList) {
+        mRoomList = roomList;
     }
 
-    public List<Equipment> getEquipmentSet() {
-        return mEquipmentSet;
+    public List<Equipment> getEquipmentList() {
+        return mEquipmentList;
     }
 
-    public void setEquipmentSet(List<Equipment> equipmentSet) {
-        mEquipmentSet = equipmentSet;
+    public void setEquipmentList(List<Equipment> equipmentList) {
+        mEquipmentList = equipmentList;
     }
 
-    public List<Shift> getShiftSet() {
-        return mShiftSet;
+    public List<Shift> getShiftList() {
+        return mShiftList;
     }
 
-    public void setShiftSet(List<Shift> shiftSet) {
-        mShiftSet = shiftSet;
+    public void setShiftList(List<Shift> shiftList) {
+        mShiftList = shiftList;
     }
 
     public int getTotalCapacity() {
@@ -164,11 +159,11 @@ public class ScheduleSolution {
     // v COMPLEX METHODS v //
 
     public int getNumberUnassignedTasks() {
-        int totalNumTasks = mTaskSet.size();
+        int totalNumTasks = mTaskList.size();
         int totalAssignedTasks = 0;
-        for (Task t : mTaskSet) {
-            for (ShiftAssignment shiftAssignment : mAssignments) {
-                if (shiftAssignment.getTask() == t) {
+        for (Task t : mTaskList) {
+            for (TimeslotAssignment timeslotAssignment : mAssignments) {
+                if (timeslotAssignment.getTask() == t) {
                     totalAssignedTasks += 1;
                 }
             }
@@ -176,10 +171,10 @@ public class ScheduleSolution {
         return totalNumTasks - totalAssignedTasks;
     }
 
-    public Set<Task> getUnassignedTasks() {
-        Set<Task> allTasks = new HashSet<>(mTaskSet);
-        Set<Task> assignedTasks = new HashSet<>();
-        for (ShiftAssignment sa : mAssignments) {
+    public List<Task> getUnassignedTasks() {
+        List<Task> allTasks = new ArrayList<>(mTaskList);
+        List<Task> assignedTasks = new ArrayList<>();
+        for (TimeslotAssignment sa : mAssignments) {
             if (sa.isTaskAssigned()) {
                 assignedTasks.add(sa.getTask());
             }
@@ -189,7 +184,7 @@ public class ScheduleSolution {
     }
 
     public void printAllUnassignedTasks() {
-        Set<Task> unassignedTasks = getUnassignedTasks();
+        List<Task> unassignedTasks = getUnassignedTasks();
         System.out.println("Number of unassigned tasks: " + getNumberUnassignedTasks());
         for (Task t : unassignedTasks) {
             System.out.println(t);
@@ -197,12 +192,12 @@ public class ScheduleSolution {
     }
 
     public void printPiGroupSplit() {
-        Set<ShiftAssignment> assignments = getAssignments();
+        List<TimeslotAssignment> assignments = getAssignments();
         Map<PiGroup, MutableInt> piGroupDistribution = new HashMap<>();
-        for (PiGroup piGroup: getPiGroupSet()) {
+        for (PiGroup piGroup: getPiGroupList()) {
             piGroupDistribution.put(piGroup, new MutableInt(0));
         }
-        for (ShiftAssignment sa : assignments) {
+        for (TimeslotAssignment sa : assignments) {
             if (sa.isTaskAssigned()) {
                 MutableInt count = piGroupDistribution.getOrDefault(sa.getPiGroup(), new MutableInt(0));
                 count.add(1);
@@ -215,13 +210,13 @@ public class ScheduleSolution {
 
     // v CSV EXPORT METHODS v //
 
-    public static String[] assignmentToCsvRow(ShiftAssignment assignment) {
+    public static String[] assignmentToCsvRow(TimeslotAssignment assignment) {
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         String row = null;
 
-        LocalDateTime startDate = assignment.getShift().getStartTime();
-        LocalDateTime endDate = assignment.getShift().getEndTime();
+        LocalDateTime startDate = assignment.getTimeslot().getStartTime();
+        LocalDateTime endDate = assignment.getTimeslot().getEndTime();
 
         String startDateString = dateFormat.format(startDate);
         String startTimeString = timeFormat.format(startDate);
@@ -239,9 +234,9 @@ public class ScheduleSolution {
     private List<String[]> getAssignmentsStringArray() {
         List<String[]> lines = new ArrayList<>();
         lines.add(new String[] {"Subject", "Start Date", "Start Time", "End Date", "End Time"});
-        for (ShiftAssignment shiftAssignment : getAssignments()) {
-            if (shiftAssignment.isTaskAssigned()) {
-                lines.add(assignmentToCsvRow(shiftAssignment));
+        for (TimeslotAssignment timeslotAssignment : getAssignments()) {
+            if (timeslotAssignment.isTaskAssigned()) {
+                lines.add(assignmentToCsvRow(timeslotAssignment));
             }
         }
         return lines;

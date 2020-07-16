@@ -48,63 +48,63 @@ public class MitoConstraintProvider implements ConstraintProvider {
 //    }
 
     private Constraint scheduleTasksWithDueDates(ConstraintFactory factory) {
-        return factory.from(ShiftAssignment.class)
-                .filter(ShiftAssignment::isTaskAssignedWithDueDate)
+        return factory.from(TimeslotAssignment.class)
+                .filter(TimeslotAssignment::isTaskAssignedWithDueDate)
                 .rewardConfigurable("Schedule tasks with due dates");
     }
 
     private Constraint respectDueDates(ConstraintFactory factory) {
-        return factory.from(ShiftAssignment.class)
-                .filter(ShiftAssignment::isTaskAssigned)
-                .filter(ShiftAssignment::hasTaskMissedDueDate)
+        return factory.from(TimeslotAssignment.class)
+                .filter(TimeslotAssignment::isTaskAssigned)
+                .filter(TimeslotAssignment::hasTaskMissedDueDate)
                 .penalizeConfigurable("Due date conflict");
     }
 
     private Constraint scheduleHighPriorityTasks(ConstraintFactory factory) {
-        ToIntFunction<ShiftAssignment> getPriority = (shiftAssignment) -> shiftAssignment.getTask().getPriority();
+        ToIntFunction<TimeslotAssignment> getPriority = (shiftAssignment) -> shiftAssignment.getTask().getPriority();
 
-        return factory.from(ShiftAssignment.class)
-                .filter(ShiftAssignment::isTaskAssigned)
+        return factory.from(TimeslotAssignment.class)
+                .filter(TimeslotAssignment::isTaskAssigned)
                 .rewardConfigurable("High priority work done", getPriority);
     }
 
     private Constraint schedulePiGroupsFairly(ConstraintFactory factory) {
         ToIntBiFunction<PiGroup, Integer> getCountSquared = (piGroup, count) -> count * count;
-        return factory.from(ShiftAssignment.class)
-                .filter(ShiftAssignment::isTaskAssigned)
-                .groupBy(ShiftAssignment::getPiGroup, count())
+        return factory.from(TimeslotAssignment.class)
+                .filter(TimeslotAssignment::isTaskAssigned)
+                .groupBy(TimeslotAssignment::getPiGroup, count())
                 .penalizeConfigurable("PI group unfairness", getCountSquared);
     }
 
     private Constraint doNotRepeatTasks(ConstraintFactory factory) {
-        return factory.fromUniquePair(ShiftAssignment.class, equal(ShiftAssignment::getTask))
+        return factory.fromUniquePair(TimeslotAssignment.class, equal(TimeslotAssignment::getTask))
                 .filter((sa, sa2) -> sa.isTaskAssigned() && sa2.isTaskAssigned())
                 .penalizeConfigurable("Do not repeat tasks");
     }
 
     private Constraint doNotDoubleBookPerson(ConstraintFactory factory) {
-        return factory.fromUniquePair(ShiftAssignment.class, equal(ShiftAssignment::getPerson), equal(ShiftAssignment::getShift))
+        return factory.fromUniquePair(TimeslotAssignment.class, equal(TimeslotAssignment::getPerson), equal(TimeslotAssignment::getTimeslot))
                 .filter((sa, sa2) -> sa.isTaskAssigned() && sa2.isTaskAssigned())
                 .penalizeConfigurable("Do not double book people");
     }
 
     private Constraint scheduleTasks(ConstraintFactory factory) {
-        return factory.from(ShiftAssignment.class)
-                .filter(ShiftAssignment::isTaskAssigned)
+        return factory.from(TimeslotAssignment.class)
+                .filter(TimeslotAssignment::isTaskAssigned)
                 .rewardConfigurable("Schedule tasks");
     }
 
-    //TODO figure out to implement preceeding tasks.
+    //TODO figure out to implement preceding tasks.
     // For the given shift assignment, need to hard penalize if
-    // there doesn't exist a shift assignment with lower planningID (or earlier date) with the preceeding task.
-//    private Constraint schedulePreceedingTasks(ConstraintFactory factory) {
+    // there doesn't exist a shift assignment with lower planningID (or earlier date) with the preceding task.
+//    private Constraint schedulePrecedingTasks(ConstraintFactory factory) {
 //        return factory.from(ShiftAssignment.class)
 //                .ifNotExists(ShiftAssignment.class, )
 //    }
 
     private Constraint doNotOverbookEquipment(ConstraintFactory factory) {
-        return factory.from(ShiftAssignment.class)
-                .join(Shift.class, equal(ShiftAssignment::getShiftId, Shift::getId))
+        return factory.from(TimeslotAssignment.class)
+                .join(Shift.class, equal(TimeslotAssignment::getShiftId, Shift::getId))
                 .join(Equipment.class)
                 .groupBy((shiftAssignment, shift, equipment) -> shift,
                         (shiftAssignment, shift, equipment) -> equipment,
@@ -118,9 +118,9 @@ public class MitoConstraintProvider implements ConstraintProvider {
 
     private Constraint doNotExceedLimit(ConstraintFactory factory) {
         TriPredicate<Person, Integer, Integer> exceedsLimit = ((person, week, shiftCount) -> shiftCount > person.getWeeklyShiftLimit());
-        return factory.from(ShiftAssignment.class)
-                .filter(ShiftAssignment::isTaskAssigned)
-                .groupBy(ShiftAssignment::getPerson, ShiftAssignment::getWeek, count())
+        return factory.from(TimeslotAssignment.class)
+                .filter(TimeslotAssignment::isTaskAssigned)
+                .groupBy(TimeslotAssignment::getPerson, TimeslotAssignment::getWeek, count())
                 .filter(exceedsLimit)
                 //debugging filter
 //                .filter(((person, integer, integer2) -> {
@@ -134,11 +134,11 @@ public class MitoConstraintProvider implements ConstraintProvider {
     }
 
     private Constraint respectPrecedingTasks(ConstraintFactory factory) {
-        return factory.from(ShiftAssignment.class)
-                .filter(ShiftAssignment::isTaskAssignedWithPrecedingTask)
-                .ifNotExists(ShiftAssignment.class
-                        , equal(ShiftAssignment::getPrecedingTaskId, ShiftAssignment::getTaskId)
-                        , greaterThan(ShiftAssignment::getShiftTime, ShiftAssignment::getShiftTime))
+        return factory.from(TimeslotAssignment.class)
+                .filter(TimeslotAssignment::isTaskAssignedWithPrecedingTask)
+                .ifNotExists(TimeslotAssignment.class
+                        , equal(TimeslotAssignment::getPrecedingTaskId, TimeslotAssignment::getTaskId)
+                        , greaterThan(TimeslotAssignment::getShiftTime, TimeslotAssignment::getShiftTime))
                 .penalizeConfigurable("Preceding task conflict");
     }
 }

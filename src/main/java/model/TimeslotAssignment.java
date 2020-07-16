@@ -1,19 +1,17 @@
 package model;
 
-import comparators.ShiftAssignmentDifficultyComparator;
+import comparators.TimeslotAssignmentDifficultyComparator;
 import comparators.TaskStrengthComparator;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -22,8 +20,8 @@ import java.util.Objects;
  * There are as many model.ShiftAssignment instances per model.Shift instance as the Floor capacity.
  * Before planning, the task links are null, but the shift links are populated.
  */
-@PlanningEntity(difficultyComparatorClass = ShiftAssignmentDifficultyComparator.class)
-public class ShiftAssignment {
+@PlanningEntity(difficultyComparatorClass = TimeslotAssignmentDifficultyComparator.class)
+public class TimeslotAssignment {
     //TODO to expose this constant, may need to live in another class
     private static final int TIME_UNTIL_SLOT_DIFFICULTY_WEIGHT = 1;
     @PlanningId
@@ -31,29 +29,29 @@ public class ShiftAssignment {
 
     private static int sIdCounter = 0;
 
-    private Shift mShift;
+    private Timeslot mTimeslot;
 
     // Planning variable: changes during planning, between score calculations.
     private Task mTask;
 
-    public ShiftAssignment() {
+    public TimeslotAssignment() {
     }
 
-    public ShiftAssignment(Shift shift) {
+    public TimeslotAssignment(Timeslot timeslot) {
         mId = ++sIdCounter;
-        mShift = shift;
+        mTimeslot = timeslot;
     }
 
     public int getId() {
         return mId;
     }
 
-    public Shift getShift() {
-        return mShift;
+    public Timeslot getTimeslot() {
+        return mTimeslot;
     }
 
     public int getShiftId() {
-        return mShift.getId();
+        return mTimeslot.getId();
     }
 
 
@@ -71,7 +69,7 @@ public class ShiftAssignment {
         if (Objects.isNull(mTask) || Objects.isNull(mTask.getDueDate())) {
             return false;
         }
-        return !mShift.getStartTime().isBefore(mTask.getDueDate());
+        return !mTimeslot.getStartTime().isBefore(mTask.getDueDate());
     }
 
     public PiGroup getPiGroup() {
@@ -82,7 +80,7 @@ public class ShiftAssignment {
     }
 
     public int getWeek() {
-        LocalDateTime date = getShift().getStartTime();
+        LocalDateTime date = getTimeslot().getStartTime();
         TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
         return date.get(woy);
     }
@@ -91,7 +89,7 @@ public class ShiftAssignment {
 
     @Override
     public String toString() {
-        return mShift + " " + mTask;
+        return mTimeslot + " " + mTask;
     }
 
     public boolean isTaskAssigned() {
@@ -121,9 +119,9 @@ public class ShiftAssignment {
         return 0;
     }
 
-    public static int getDifficulty(ShiftAssignment sa) {
+    public static int getDifficulty(TimeslotAssignment sa) {
         int totalDifficulty = 0;
-        int daysUntil = (int) ChronoUnit.DAYS.between(LocalDate.now(), sa.getShift().getStartTime());
+        int daysUntil = (int) ChronoUnit.DAYS.between(LocalDate.now(), sa.getTimeslot().getStartTime());
 
         //minimum value is zero so that weird things won't happen when due date in the past
         if (daysUntil < 0) {
@@ -146,7 +144,7 @@ public class ShiftAssignment {
     }
 
     public LocalDateTime getShiftTime() {
-        return getShift().getStartTime();
+        return getTimeslot().getStartTime();
     }
 
     public boolean isTaskAssignedWithDueDate() {

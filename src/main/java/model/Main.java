@@ -36,9 +36,9 @@ public class Main {
     }
 
     public static void displaySolution(ScheduleSolution solution) {
-        Set<ShiftAssignment> assignments = solution.getAssignments();
+        List<TimeslotAssignment> assignments = solution.getAssignments();
         int nullCount = 0;
-        for (ShiftAssignment assignment: assignments) {
+        for (TimeslotAssignment assignment: assignments) {
             if (assignment.isTaskAssigned()) {
                 System.out.println(assignment);
             } else {
