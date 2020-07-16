@@ -8,12 +8,15 @@ public class Equipment {
 
     // Example name: 'PCR (047)'.
     private final String mName;
+    private final Room mRoom;
 
     // Number of pieces of equipment of the type (and model.Room associated).
+    // TODO this might need to change depending on how input data is collected.
     private final int mNumberOfEquipment;
 
-    public Equipment(int id, String name, int numberOfEquipment) {
+    public Equipment(int id, String name, Room room, int numberOfEquipment) {
         mId = id;
+        mRoom = room;
         mName = name;
         mNumberOfEquipment = numberOfEquipment;
     }
@@ -25,6 +28,10 @@ public class Equipment {
 
     public String getName() {
         return mName;
+    }
+
+    public Room getRoom() {
+        return mRoom;
     }
 
     public int getNumberOfEquipment() {

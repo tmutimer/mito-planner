@@ -16,4 +16,8 @@ public class PiGroup {
     public String getName() {
         return mName;
     }
+
+    public int getId() {
+        return mId;
+    }
 }

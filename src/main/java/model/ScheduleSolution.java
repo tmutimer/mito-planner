@@ -52,7 +52,10 @@ public class ScheduleSolution {
 
     public ScheduleSolution() throws Exception {
         ProblemData data = new ProblemData();
-        mTaskSet = data.getTaskList();
+        // for small task list
+//        mTaskSet = data.getTaskList();
+        // for larger randomised data
+        mTaskSet = data.generateTaskList(200);
         mPersonSet = data.getPersonList();
         mPiGroupSet = data.getPiGroupList();
         mRoomSet = data.getRoomList();
@@ -148,6 +151,14 @@ public class ScheduleSolution {
         return mTotalCapacity;
     }
 
+    public HardSoftScore getScore() {
+        return mScore;
+    }
+
+    public void setScore(HardSoftScore score) {
+        mScore = score;
+    }
+
 
     // v COMPLEX METHODS v //
 
@@ -186,13 +197,13 @@ public class ScheduleSolution {
 
     public void printPiGroupSplit() {
         Set<ShiftAssignment> assignments = getAssignments();
-        Map<PiGroup, MutableInt> piGroupDistribution = new HashMap<PiGroup, MutableInt>();
+        Map<PiGroup, MutableInt> piGroupDistribution = new HashMap<>();
         for (PiGroup piGroup: getPiGroupSet()) {
             piGroupDistribution.put(piGroup, new MutableInt(0));
         }
         for (ShiftAssignment sa : assignments) {
             if (sa.isTaskAssigned()) {
-                MutableInt count = piGroupDistribution.get(sa.getPiGroup());
+                MutableInt count = piGroupDistribution.getOrDefault(sa.getPiGroup(), new MutableInt(0));
                 count.add(1);
             }
         }

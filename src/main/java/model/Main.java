@@ -2,15 +2,14 @@ package model;
 
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.impl.score.director.ScoreDirector;
 
 import java.util.List;
 import java.util.Set;
 
 public class Main {
-    // TODO go through steps in 9.5
-    //  implement planning entity difficulty
-    //  implement first fit decreasing
-    //  add late acceptance
+    // TODO implement 15 min time slots
+    // TODO update double-booking constraint to be wrt 15 min slots.
     private static final String SOLVER_CONFIG = "mitoScheduleSolver.xml";
 
     public static void main(String[] args) throws Exception {
@@ -24,9 +23,13 @@ public class Main {
 
         displaySolution(solvedSolution);
 
-        System.out.println("Score: " + solvedSolution.getScore());
-
         System.out.println(solver.explainBestScore());
+        System.out.println();
+        System.out.println("Printing constraint match total map");
+        System.out.println();
+        ScoreDirector<ScheduleSolution> director = solverFactory.getScoreDirectorFactory().buildScoreDirector();
+        director.setWorkingSolution(solvedSolution);
+        System.out.println(director.getConstraintMatchTotalMap());
 
         solvedSolution.writeAssignmentsToCsv();
 
@@ -50,7 +53,6 @@ public class Main {
         System.out.println();
         solution.printAllUnassignedTasks();
         System.out.println();
-
-
+        System.out.println("Score: " + solution.getScore());
     }
 }

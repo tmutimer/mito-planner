@@ -11,19 +11,23 @@ import java.util.*;
 public class Task {
     private final int mId;
     private final Integer mPrecedingTaskId;
+    private final boolean mImmediatelyFollowsPrecedingTask;
     private final Person mPerson;
     private final String mName;
+    private final int mDuration;
     private final Date mDueDate;
     private final List<Room> mRequiredRooms;
-    private final LinkedHashMap<Equipment, Integer> mRequiredEquipment;
+    private final List<Equipment> mRequiredEquipment;
     private final int mPriority;
 
-    static int EQUIPMENT_TIME_DIFFICULTY_WEIGHT = 1;
-    static int EQUIPMENT_TYPE_DIFFICULTY_WEIGHT = 1;
-    static int DUE_DATE_DIFFICULTY_WEIGHT = 4;
+    static final int EQUIPMENT_TIME_DIFFICULTY_WEIGHT = 1;
+    static final int EQUIPMENT_TYPE_DIFFICULTY_WEIGHT = 1;
+    static final int DUE_DATE_DIFFICULTY_WEIGHT = 2000;
 
-    public Task(int id, Integer precedingTaskId, Person person, String name, Date dueDate, List<Room> rooms, LinkedHashMap<Equipment, Integer> equipment, int priority) {
+    public Task(int id, Integer precedingTaskId,  boolean immediatelyFollowsPrecedingTask, Person person, String name, int duration, Date dueDate, List<Room> rooms, List<Equipment> equipment, int priority) {
         mId = id;
+        mDuration = duration;
+        mImmediatelyFollowsPrecedingTask = immediatelyFollowsPrecedingTask;
         Integer mPrecedingTaskIdTemp = null;
         if (!Objects.isNull(precedingTaskId)) {
             mPrecedingTaskIdTemp = precedingTaskId;
@@ -45,6 +49,9 @@ public class Task {
         return mPerson;
     }
 
+    public int getDuration() {
+        return mDuration;
+    }
 
     public List<Room> getAllRequiredRooms() {
         /*
@@ -56,7 +63,7 @@ public class Task {
         return roomList;
     }
 
-    public LinkedHashMap<Equipment, Integer> getRequiredEquipment() {
+    public List<Equipment> getRequiredEquipment() {
         assert !Objects.isNull(mRequiredEquipment);
         return mRequiredEquipment;
     }
@@ -73,12 +80,16 @@ public class Task {
         return mName;
     }
 
+    public List<Room> getRequiredRooms() {
+        return mRequiredRooms;
+    }
+
     public Integer getPrecedingTaskId() {
         return mPrecedingTaskId;
     }
 
-    public List<Room> getRequiredRooms() {
-        return mRequiredRooms;
+    public boolean isImmediatelyFollowsPrecedingTask() {
+        return mImmediatelyFollowsPrecedingTask;
     }
 
     @Override
@@ -87,7 +98,7 @@ public class Task {
                 ", Person=" + mPerson +
                 ", Due Date=" + mDueDate +
                 ", Priority=" + mPriority +
-                ", PrecedingTask=" + mPrecedingTaskId;
+                ", Preceding Task=" + mPrecedingTaskId;
     }
 
     @Override
@@ -107,15 +118,13 @@ public class Task {
     public static int getStrength(Task t) {
         // TODO make these final static members in the Task class
         int difficulty = 0;
-        LinkedHashMap<Equipment, Integer> equipment = t.getRequiredEquipment();
+        List<Equipment> equipment = t.getRequiredEquipment();
 
         int totalEquipmentMinutes = 0;
         int typesOfEquipment = equipment.size();
         int daysUntilDue = 0;
 
-        for (int time: equipment.values()) {
-            totalEquipmentMinutes += time;
-        }
+        difficulty += t.getDuration();
 
         daysUntilDue = (int) ChronoUnit.DAYS.between(LocalDate.now(), t.getDueDate().toInstant());
 

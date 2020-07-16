@@ -29,6 +29,19 @@ public class Person {
         return mId;
     }
 
+    @Override
+    public int hashCode() {
+        return getId();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Person) {
+            return ((Person) obj).getId() == getId();
+        }
+        return false;
+    }
+
     public String getName() {
         return mName;
     }

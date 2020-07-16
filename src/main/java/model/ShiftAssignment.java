@@ -97,9 +97,7 @@ public class ShiftAssignment {
 
     public boolean isTaskAssignedWithPrecedingTask() {
         if (!Objects.isNull(mTask)) {
-            if (!Objects.isNull(mTask.getPrecedingTaskId())) {
-                return true;
-            }
+            return !Objects.isNull(mTask.getPrecedingTaskId());
         }
         return false;
     }

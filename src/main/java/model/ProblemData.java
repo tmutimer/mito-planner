@@ -33,15 +33,93 @@ public class ProblemData {
         mTaskList = createTaskList();
         mShiftList = createShiftList();
     }
+
 // WORKING ON THIS TO GENERATE LARGE TASK LISTS
-//    public List<Task> generateTaskList(int numTasks) {
-//        Random random = new Random();
-//        int id_counter = 0;
-//        for (int i = 0; i < numTasks ; i++) {
-//            int id = ++id_counter;
-//            Person person = mPersonList.get(random.nextInt(mPersonList.size()));
-//        }
-//    }
+    public List<Task> generateTaskList(int numTasks) {
+        Random random = new Random();
+        int id_counter = 0;
+        List<Task> taskList = new ArrayList<>();
+        for (int i = 0; i < numTasks ; i++) {
+            int id = ++id_counter;
+            Person person = mPersonList.get(random.nextInt(mPersonList.size()));
+            String name = "Random Task #X".replace("X", String.valueOf(id));
+            int duration = random.nextInt(12) * 15;
+            List<Equipment> equipmentUsage = new ArrayList<>();
+            equipmentUsage.add(mEquipmentList.get(random.nextInt(mEquipmentList.size())));
+            //TODO implement due date, precedingtask, and immediately_follows_preceding_task
+
+            Task precedingTask = null;
+            List<Task> precedingTaskOptions = new ArrayList<>();
+            // 40% of the time
+            if (random.nextInt(10) >= 6) {
+                // filter the task list for those which do not already precede another
+                for (Task t : taskList) {
+                    if (t.getPerson() == person) {
+                        boolean alreadyUsed = false;
+                        for (Task t2 : taskList) {
+                            if (Objects.nonNull(t2.getPrecedingTaskId())) {
+                                if (t2.getPrecedingTaskId() == t.getId()) {
+                                    alreadyUsed = true;
+                                    break;
+                                }
+                            }
+                        }
+                        // if no other task is using this task as a preceding task, then it's a possibility
+                        if (!alreadyUsed) {
+                            precedingTaskOptions.add(t);
+                        }
+                    }
+                }
+                //using Task instead of Id for later use in this method
+                if (precedingTaskOptions.size() > 0) {
+                    precedingTask = precedingTaskOptions.get(random.nextInt(precedingTaskOptions.size()));
+                }
+            }
+
+            Date dueDate = null;
+            List<Date>dateOptions = new ArrayList<>();
+            for(Shift s : mShiftList) {
+                dateOptions.add(s.getStartTime());
+            }
+
+//            30% of the time set a due date
+            if (random.nextInt(10) >= 7) {
+                if (Objects.isNull(precedingTask)) dueDate = dateOptions.get(random.nextInt(dateOptions.size()));
+                else if (Objects.nonNull(precedingTask.getDueDate())) {
+                    ArrayList<Date> dateOptionsConstrained = new ArrayList<>();
+                    for (Date d : dateOptions) {
+                        if (d.after(precedingTask.getDueDate())) {
+                            dateOptionsConstrained.add(d);
+                        }
+                    }
+                    if(dateOptionsConstrained.size() > 0) dueDate = dateOptionsConstrained.get(random.nextInt(dateOptionsConstrained.size()));
+                }
+            }
+
+            boolean immediatelyFollowsPrecedingTask = random.nextInt(10) >= 4;
+            int priority = random.nextInt(10) + 1;
+
+            Integer precedingTaskId = null;
+            if (Objects.nonNull(precedingTask)) precedingTaskId = precedingTask.getId();
+
+            Task task = new Task(id, precedingTaskId, immediatelyFollowsPrecedingTask,
+                    person, name, duration,
+                    dueDate, determineRoomUsage(person, equipmentUsage),
+                    equipmentUsage, priority);
+            taskList.add(task);
+        }
+        return taskList;
+    }
+
+    public List<Room> determineRoomUsage(Person person, List<Equipment> equipment) {
+        List<Room> rooms = new ArrayList<>();
+        for(Equipment e : equipment) {
+            rooms.add(e.getRoom());
+        }
+        rooms.add(person.getOffice());
+
+        return rooms;
+    }
 
     // TODO add validations as per model.Person
     // model.Room //
@@ -58,6 +136,7 @@ public class ProblemData {
                     String[] data = row.split(",");
                     int id = Integer.parseInt(data[0]);
                     String name = data[1];
+//                    System.out.println("Loading in room with name: " + name);
                     int capacity = Integer.parseInt(data[3]);
                     Room room = new Room(id, name, capacity);
                     roomList.add(room);
@@ -75,7 +154,7 @@ public class ProblemData {
 
     // TODO see if any validations are needed
     // model.Equipment //
-    public List<Equipment> createEquipmentList() {
+    public List<Equipment> createEquipmentList() throws Exception {
         List<Equipment> equipmentList = new ArrayList<>();
         BufferedReader csvReader;
         {
@@ -88,8 +167,23 @@ public class ProblemData {
                     String[] data = row.split(",");
                     int id = Integer.parseInt(data[0]);
                     String name = data[1];
+                    String roomName = data[3];
+                    Room room = null;
+//                    System.out.println("Trying to match: " + roomName);
+                    for (Room r : mRoomList) {
+//                        System.out.println(r.getRoomName() + " = " + roomName + "?");
+                        if (r.getRoomName().equals(roomName)) {
+                            room = r;
+                        }
+                    }
+
+                    if (room == null && !StringUtils.isEmpty(roomName)) {
+                        System.out.println("Failed to match " + roomName);
+                        throw new Exception("Room not found for '" + roomName + "'! Was the name typed correctly?");
+                    }
+
                     int quantity = Integer.parseInt(data[4]);
-                    Equipment equipment = new Equipment(id, name, quantity);
+                    Equipment equipment = new Equipment(id, name, room, quantity);
                     equipmentList.add(equipment);
                 }
                 csvReader.close();
@@ -203,13 +297,15 @@ public class ProblemData {
                         dueDate = new SimpleDateFormat("ddMMyyyy").parse(data[5]);
                     }
 
+                    int duration = Integer.parseInt(data[3]);
+
                     Integer precedingTaskId = null;
                     String precedingTaskString = data[7];
                     if (!StringUtils.isEmpty(data[7])) {
                         precedingTaskId = Integer.parseInt(data[7]);
                     }
                     // TODO get equipment reading from tasks.csv
-                    Task task = new Task(id, precedingTaskId, person, name, dueDate, null, null, priority);
+                    Task task = new Task(id, precedingTaskId, false, person, name, duration, dueDate, null, null, priority);
                     taskList.add(task);
                 }
             } catch (IOException e) {

@@ -19,11 +19,19 @@
     </constructionHeuristic>
 
     <localSearch>
-        <localSearchType>TABU_SEARCH</localSearchType>
+<!--        <localSearchType>TABU_SEARCH</localSearchType>-->
+        <acceptor>
+            <entityTabuSize>7</entityTabuSize>
+        </acceptor>
+        <forager>
+            <acceptedCountLimit>1000</acceptedCountLimit>
+        </forager>
     </localSearch>
 
+
+
     <termination>
-        <secondsSpentLimit>30</secondsSpentLimit>
+        <secondsSpentLimit>600</secondsSpentLimit>
         <unimprovedSpentLimit>PT1M</unimprovedSpentLimit>
     </termination>
 
