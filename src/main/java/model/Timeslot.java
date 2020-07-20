@@ -22,7 +22,7 @@ public class Timeslot {
     public static List<Timeslot> slotsFromShift(Shift shift) {
         ArrayList<Timeslot> slots = new ArrayList<>();
         LocalDateTime start = shift.getStartTime();
-        int numSlots = (int) shift.getLength() / sMinutesPerTimeSlot;
+        int numSlots = shift.getLength() / sMinutesPerTimeSlot;
         for (int i = 0; i < numSlots; i++) {
             slots.add(new Timeslot(start, start.plusMinutes(sMinutesPerTimeSlot), shift));
             start = start.plusMinutes(sMinutesPerTimeSlot);

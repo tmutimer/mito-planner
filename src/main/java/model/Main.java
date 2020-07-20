@@ -5,7 +5,6 @@ import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 
 import java.util.List;
-import java.util.Set;
 
 public class Main {
     // TODO implement 15 min time slots

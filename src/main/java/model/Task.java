@@ -121,13 +121,9 @@ public class Task {
         int difficulty = 0;
         List<Equipment> equipment = t.getRequiredEquipment();
 
-        int totalEquipmentMinutes = 0;
         int typesOfEquipment = equipment.size();
-        int daysUntilDue = 0;
-
         difficulty += t.getDuration();
-
-        daysUntilDue = (int) ChronoUnit.DAYS.between(LocalDate.now(), t.getDueDate());
+        int daysUntilDue = (int) ChronoUnit.DAYS.between(LocalDate.now(), t.getDueDate());
 
         //minimum value is zero so that weird things won't happen when due date in the past
         if (daysUntilDue < 0) {
@@ -135,7 +131,6 @@ public class Task {
         }
 
         difficulty += typesOfEquipment * EQUIPMENT_TYPE_DIFFICULTY_WEIGHT;
-        difficulty += totalEquipmentMinutes * EQUIPMENT_TIME_DIFFICULTY_WEIGHT;
         difficulty += daysUntilDue * DUE_DATE_DIFFICULTY_WEIGHT;
         return difficulty;
     }

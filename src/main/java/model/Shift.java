@@ -1,10 +1,7 @@
 package model;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.Date;
 
 /**
  * The model.Shift is a half-day slot. This has a fixed relationship to model.ShiftAssignment objects,
