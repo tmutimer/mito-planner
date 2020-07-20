@@ -20,10 +20,12 @@ import java.util.Objects;
  * There are as many model.ShiftAssignment instances per model.Shift instance as the Floor capacity.
  * Before planning, the task links are null, but the shift links are populated.
  */
-@PlanningEntity(difficultyComparatorClass = TimeslotAssignmentDifficultyComparator.class)
+@PlanningEntity
+//        (difficultyComparatorClass = TimeslotAssignmentDifficultyComparator.class)
 public class TimeslotAssignment {
     //TODO to expose this constant, may need to live in another class
     private static final int TIME_UNTIL_SLOT_DIFFICULTY_WEIGHT = 1;
+
     @PlanningId
     private int mId;
 
@@ -55,7 +57,9 @@ public class TimeslotAssignment {
     }
 
 
-    @PlanningVariable(valueRangeProviderRefs = {"taskList"}, nullable = true, strengthComparatorClass = TaskStrengthComparator.class)
+    @PlanningVariable(valueRangeProviderRefs = {"taskList"}, nullable = true
+//            , strengthComparatorClass = TaskStrengthComparator.class
+    )
     public Task getTask() {
         return mTask;
     }
@@ -140,6 +144,7 @@ public class TimeslotAssignment {
         if (isTaskAssigned()) {
             return getTask().getId();
         }
+        // TODO revisit this, is returning -1 a good idea?
         return -1;
     }
 

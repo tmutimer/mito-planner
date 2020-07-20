@@ -15,24 +15,22 @@
     </scoreDirectorFactory>
 
     <constructionHeuristic>
-        <constructionHeuristicType>FIRST_FIT_DECREASING</constructionHeuristicType>
+        <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
     </constructionHeuristic>
 
     <localSearch>
-<!--        <localSearchType>TABU_SEARCH</localSearchType>-->
-        <acceptor>
-            <entityTabuSize>7</entityTabuSize>
-        </acceptor>
-        <forager>
-            <acceptedCountLimit>1000</acceptedCountLimit>
-        </forager>
+        <localSearchType>TABU_SEARCH</localSearchType>
+<!--        <acceptor>-->
+<!--            <entityTabuSize>7</entityTabuSize>-->
+<!--        </acceptor>-->
+<!--        <forager>-->
+<!--            <acceptedCountLimit>1000</acceptedCountLimit>-->
+<!--        </forager>-->
     </localSearch>
 
-
-
     <termination>
-        <secondsSpentLimit>600</secondsSpentLimit>
-        <unimprovedSpentLimit>PT1M</unimprovedSpentLimit>
+        <secondsSpentLimit>10</secondsSpentLimit>
+<!--        <unimprovedSpentLimit>PT1M</unimprovedSpentLimit>-->
     </termination>
 
 </solver>

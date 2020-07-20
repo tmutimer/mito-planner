@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -324,7 +325,7 @@ public class ProblemData {
                     int priority = Integer.parseInt(data[6]);
                     LocalDateTime dueDate = null;
                     if (!StringUtils.isEmpty(data[5])) {
-                        dueDate = LocalDateTime.parse(data[5], DateTimeFormatter.ofPattern("ddMMyyyy"));
+                        dueDate = LocalDate.parse(data[5], DateTimeFormatter.ofPattern("ddMMuuuu")).atStartOfDay();
                     }
 
                     int duration = Integer.parseInt(data[3]);
