@@ -5,7 +5,10 @@ import org.optaplanner.core.api.function.TriPredicate;
 import org.optaplanner.core.api.score.stream.Constraint;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
+import org.optaplanner.core.api.score.stream.Joiners;
 
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 import java.util.function.ToIntBiFunction;
 import java.util.function.ToIntFunction;
 
@@ -28,7 +31,8 @@ public class MitoConstraintProvider implements ConstraintProvider {
 
                 doNotDoubleBookPerson(factory),
                 scheduleTasks(factory),
-                doNotOverbookEquipment(factory),
+                // TODO we need a totally different approach now
+//                doNotOverbookEquipment(factory),
                 // TODO limits appear to be for  all time, not per week. Not a first fit issue.
                 doNotExceedLimit(factory),
                 scheduleTasksWithDueDates(factory),
@@ -58,7 +62,6 @@ public class MitoConstraintProvider implements ConstraintProvider {
 
     private Constraint respectDueDates(ConstraintFactory factory) {
         return factory.from(TaskAssignment.class)
-                .filter(TaskAssignment::isTaskAssigned)
                 .filter(TaskAssignment::hasTaskMissedDueDate)
                 .penalizeConfigurable("Due date conflict");
     }
@@ -79,6 +82,7 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 .penalizeConfigurable("PI group unfairness", getCountSquared);
     }
 
+    // TODO this is probably entirely broken
     private Constraint doNotRepeatTasks(ConstraintFactory factory) {
         return factory.fromUniquePair(TaskAssignment.class, equal(TaskAssignment::getTask))
                 .filter((sa, sa2) -> sa.isTaskAssigned() && sa2.isTaskAssigned())
@@ -105,6 +109,7 @@ public class MitoConstraintProvider implements ConstraintProvider {
 //                .ifNotExists(ShiftAssignment.class, )
 //    }
 
+    // TODO this will need to be totally reworked
     private Constraint doNotOverbookEquipment(ConstraintFactory factory) {
         return factory.from(TaskAssignment.class)
                 .join(Shift.class, equal(TaskAssignment::getShiftId, Shift::getId))
@@ -136,12 +141,19 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 .penalizeConfigurable("Shift limit conflict");
     }
 
+    // TODO need to be able to filter for AssignedTasks within the not exists??
     private Constraint respectPrecedingTasks(ConstraintFactory factory) {
+        BiPredicate<TaskAssignment, TaskAssignment> isPrecedingTaskScheduledInThePast =
+                ((taskAssignment, taskAssignment2) -> {
+                    boolean tasksMatchUp = taskAssignment.getPrecedingTaskId() == taskAssignment2.getTaskId();
+                    boolean precedingTaskScheduledInThePast = taskAssignment2.isTaskAssigned() && !taskAssignment.getStartTime().isBefore(taskAssignment2.getEndTime());
+                    return tasksMatchUp && precedingTaskScheduledInThePast;
+                });
+
         return factory.from(TaskAssignment.class)
                 .filter(TaskAssignment::isTaskAssignedWithPrecedingTask)
                 .ifNotExists(TaskAssignment.class
-                        , equal(TaskAssignment::getPrecedingTaskId, TaskAssignment::getTaskId)
-                        , greaterThan(TaskAssignment::getShiftTime, TaskAssignment::getShiftTime))
+                        , filtering(isPrecedingTaskScheduledInThePast))
                 .penalizeConfigurable("Preceding task conflict");
     }
 }

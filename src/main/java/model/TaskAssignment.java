@@ -57,7 +57,7 @@ public class TaskAssignment {
     }
 
     public int getShiftId() {
-        return mStartingTimeGrain.getId();
+        return mStartingTimeGrain.getShift().getId();
     }
 
 
@@ -71,14 +71,14 @@ public class TaskAssignment {
 
     public boolean hasTaskMissedDueDate() {
 
-        if (Objects.isNull(mTask) || Objects.isNull(mTask.getDueDate())) {
+        if (Objects.isNull(mStartingTimeGrain) || Objects.isNull(mTask.getDueDate())) {
             return false;
         }
         return !mStartingTimeGrain.getStartTime().isBefore(mTask.getDueDate());
     }
 
     public PiGroup getPiGroup() {
-        if (Objects.isNull(mTask)) {
+        if (Objects.isNull(mStartingTimeGrain)) {
             return null;
         }
         return mTask.getPerson().getPiGroup();
@@ -98,11 +98,11 @@ public class TaskAssignment {
     }
 
     public boolean isTaskAssigned() {
-        return !Objects.isNull(mTask);
+        return !Objects.isNull(mStartingTimeGrain);
     }
 
     public boolean isTaskAssignedWithPrecedingTask() {
-        if (!Objects.isNull(mTask)) {
+        if (!Objects.isNull(mStartingTimeGrain)) {
             return !Objects.isNull(mTask.getPrecedingTaskId());
         }
         return false;
@@ -150,10 +150,23 @@ public class TaskAssignment {
     }
 
     public LocalDateTime getShiftTime() {
-        return getStartingTimeGrain().getStartTime();
+        if (Objects.nonNull(mStartingTimeGrain)) {
+            return getStartingTimeGrain().getStartTime();
+        }
+        return null;
     }
 
     public boolean isTaskAssignedWithDueDate() {
         return isTaskAssigned() && mTask.hasDueDate();
+    }
+
+
+    // TODO Find out if this is bad practice?
+    public LocalDateTime getStartTime() {
+        return isTaskAssigned() ? mStartingTimeGrain.getStartTime() : null;
+    }
+
+    public LocalDateTime getEndTime() {
+        return isTaskAssigned() ? getStartTime().plusMinutes(TimeGrain.getMinutesPerTimeGrain() * mTask.getDuration()) : null;
     }
 }

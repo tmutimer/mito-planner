@@ -46,4 +46,8 @@ public class TimeGrain {
         return mShift;
     }
 
+
+    public static int getMinutesPerTimeGrain() {
+        return sMinutesPerTimeGrain;
+    }
 }
