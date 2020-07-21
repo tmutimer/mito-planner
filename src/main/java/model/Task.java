@@ -116,7 +116,7 @@ public class Task {
     }
 
     // Static methods used in comparator. No idea why they must be static, but oh well...
-    public static int getStrength(Task t) {
+    public static int getDifficulty(Task t) {
         // TODO make these final static members in the Task class
         int difficulty = 0;
         List<Equipment> equipment = t.getRequiredEquipment();

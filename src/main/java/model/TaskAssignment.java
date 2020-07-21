@@ -1,5 +1,7 @@
 package model;
 
+import comparators.TaskDifficultyComparator;
+import comparators.TimeslotAssignmentStrengthComparator;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
@@ -17,44 +19,48 @@ import java.util.Objects;
  * There are as many model.ShiftAssignment instances per model.Shift instance as the Floor capacity.
  * Before planning, the task links are null, but the shift links are populated.
  */
-@PlanningEntity
-//        (difficultyComparatorClass = TimeslotAssignmentDifficultyComparator.class)
-public class TimeslotAssignment {
+// TODO May need to change this to be a TaskAssignmentDifficultyComparator
+@PlanningEntity(difficultyComparatorClass = TaskDifficultyComparator.class)
+public class TaskAssignment {
     //TODO to expose this constant, may need to live in another class
     private static final int TIME_UNTIL_SLOT_DIFFICULTY_WEIGHT = 1;
 
     @PlanningId
     private int mId;
     private static int sIdCounter = 0;
-    private Timeslot mTimeslot;
 
-    // Planning variable: changes during planning, between score calculations.
+    // In new model, Tasks are static
     private Task mTask;
 
-    public TimeslotAssignment() {
+    // The TimeGrain start time is the variable!
+    private TimeGrain mStartingTimeGrain;
+
+    public TaskAssignment() {
     }
 
-    public TimeslotAssignment(Timeslot timeslot) {
+    public TaskAssignment(Task t) {
         mId = ++sIdCounter;
-        mTimeslot = timeslot;
+        mTask = t;
     }
 
     public int getId() {
         return mId;
     }
 
-    public Timeslot getTimeslot() {
-        return mTimeslot;
+    @PlanningVariable(valueRangeProviderRefs = {"timeGrainList"}, nullable = true, strengthComparatorClass = TimeslotAssignmentStrengthComparator.class)
+    public TimeGrain getStartingTimeGrain() {
+        return mStartingTimeGrain;
+    }
+
+    public void setStartingTimeGrain(TimeGrain startingTimeGrain) {
+        mStartingTimeGrain = startingTimeGrain;
     }
 
     public int getShiftId() {
-        return mTimeslot.getId();
+        return mStartingTimeGrain.getId();
     }
 
 
-    @PlanningVariable(valueRangeProviderRefs = {"taskList"}, nullable = true
-//            , strengthComparatorClass = TaskStrengthComparator.class
-    )
     public Task getTask() {
         return mTask;
     }
@@ -68,7 +74,7 @@ public class TimeslotAssignment {
         if (Objects.isNull(mTask) || Objects.isNull(mTask.getDueDate())) {
             return false;
         }
-        return !mTimeslot.getStartTime().isBefore(mTask.getDueDate());
+        return !mStartingTimeGrain.getStartTime().isBefore(mTask.getDueDate());
     }
 
     public PiGroup getPiGroup() {
@@ -79,7 +85,7 @@ public class TimeslotAssignment {
     }
 
     public int getWeek() {
-        LocalDateTime date = getTimeslot().getStartTime();
+        LocalDateTime date = getStartingTimeGrain().getStartTime();
         TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
         return date.get(woy);
     }
@@ -88,7 +94,7 @@ public class TimeslotAssignment {
 
     @Override
     public String toString() {
-        return mTimeslot + " " + mTask;
+        return mStartingTimeGrain + " " + mTask;
     }
 
     public boolean isTaskAssigned() {
@@ -118,9 +124,9 @@ public class TimeslotAssignment {
         return 0;
     }
 
-    public static int getDifficulty(TimeslotAssignment sa) {
+    public static int getDifficulty(TaskAssignment sa) {
         int totalDifficulty = 0;
-        int daysUntil = (int) ChronoUnit.DAYS.between(LocalDate.now(), sa.getTimeslot().getStartTime());
+        int daysUntil = (int) ChronoUnit.DAYS.between(LocalDate.now(), sa.getStartingTimeGrain().getStartTime());
 
         //minimum value is zero so that weird things won't happen when due date in the past
         if (daysUntil < 0) {
@@ -144,7 +150,7 @@ public class TimeslotAssignment {
     }
 
     public LocalDateTime getShiftTime() {
-        return getTimeslot().getStartTime();
+        return getStartingTimeGrain().getStartTime();
     }
 
     public boolean isTaskAssignedWithDueDate() {

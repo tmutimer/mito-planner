@@ -27,8 +27,8 @@ public class ProblemData {
     private final List<Task> mTaskList;
     private final List<PiGroup> mPiGroupList;
     private final List<Shift> mShiftList;
-    private final List<Timeslot> mTimeslotList;
-    private final List<TimeslotAssignment> mTimeslotAssignmentList;
+    private final List<TimeGrain> mTimeGrainList;
+    private final List<TaskAssignment> mTaskAssignmentList;
 
     public ProblemData() throws Exception {
         // TODO make total capacity dynamic from the appropriate csv - maybe there should be a settings.txt file.
@@ -39,30 +39,28 @@ public class ProblemData {
         mPersonList = createPersonList();
         mTaskList = createTaskList();
         mShiftList = createShiftList();
-        mTimeslotList = createTimeslotList();
-        mTimeslotAssignmentList = createTimeslotAssignmentList();
+        mTimeGrainList = createTimeGrainList();
+        mTaskAssignmentList = createTaskAssignmentList();
     }
 
-    private List<TimeslotAssignment> createTimeslotAssignmentList() {
-        List<TimeslotAssignment> timeslotAssignments = new ArrayList<>();
-        for (int i = 0; i < mTotalCapacity; i++) {
-            for (Timeslot ts : mTimeslotList) {
-                timeslotAssignments.add(new TimeslotAssignment(ts));
-            }
+    private List<TaskAssignment> createTaskAssignmentList() {
+        List<TaskAssignment> taskAssignments = new ArrayList<>();
+        for (Task t : mTaskList) {
+            taskAssignments.add(new TaskAssignment(t));
         }
-        return timeslotAssignments;
+        return taskAssignments;
     }
 
-    private List<Timeslot> createTimeslotList() {
-        List<Timeslot> slotList = new ArrayList<>();
+    private List<TimeGrain> createTimeGrainList() {
+        List<TimeGrain> slotList = new ArrayList<>();
         for (Shift s : mShiftList) {
-            slotList.addAll(Timeslot.slotsFromShift(s));
+            slotList.addAll(TimeGrain.fromShift(s));
         }
         return slotList;
     }
 
-    public List<Timeslot> getTimeslotList() {
-        return mTimeslotList;
+    public List<TimeGrain> getTimeGrainList() {
+        return mTimeGrainList;
     }
 
     // WORKING ON THIS TO GENERATE LARGE TASK LISTS
@@ -424,7 +422,7 @@ public class ProblemData {
         return mTotalCapacity;
     }
 
-    public List<TimeslotAssignment> getTimeslotAssignmentList() {
-        return mTimeslotAssignmentList;
+    public List<TaskAssignment> getTaskAssignmentList() {
+        return mTaskAssignmentList;
     }
 }

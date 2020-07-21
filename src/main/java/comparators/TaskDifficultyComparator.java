@@ -6,9 +6,9 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 // At the moment this is not used, as Task is not a Planning Entity, but a Problem Fact
-public class TaskStrengthComparator implements Comparator<Task>, Serializable {
+public class TaskDifficultyComparator implements Comparator<Task>, Serializable {
 
-    private static final Comparator<Task> COMPARATOR = Comparator.comparingInt(Task::getStrength)
+    private static final Comparator<Task> COMPARATOR = Comparator.comparingInt(Task::getDifficulty)
             .thenComparingInt(Task::getId);
 
     @Override
