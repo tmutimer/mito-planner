@@ -25,9 +25,7 @@ public class TimeslotAssignment {
 
     @PlanningId
     private int mId;
-
     private static int sIdCounter = 0;
-
     private Timeslot mTimeslot;
 
     // Planning variable: changes during planning, between score calculations.

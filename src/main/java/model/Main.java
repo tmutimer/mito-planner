@@ -9,6 +9,9 @@ import java.util.List;
 public class Main {
     // TODO implement 15 min time slots
     // TODO update double-booking constraint to be wrt 15 min slots.
+    // TODO do I want to make Task the Planning Entity, with Timeslot as an assignment:
+    //  If so, would need to make it so Tasks are in 15-min sized chunks, and ID's will get complicated.
+    //  however, planning difficulty would become much more appropriate, I think!
     private static final String SOLVER_CONFIG = "mitoScheduleSolver.xml";
 
     public static void main(String[] args) throws Exception {

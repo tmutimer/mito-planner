@@ -22,7 +22,10 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 // TODO may need to revisit de Smet's advice about implementing alongside other soft constraints.
                 scheduleHighPriorityTasks(factory),
                 schedulePiGroupsFairly(factory),
-                doNotRepeatTasks(factory),
+
+                // TODO fix this
+//                doNotRepeatTasks(factory),
+
                 doNotDoubleBookPerson(factory),
                 scheduleTasks(factory),
                 doNotOverbookEquipment(factory),
