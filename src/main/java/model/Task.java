@@ -50,7 +50,7 @@ public class Task {
         return mPerson;
     }
 
-    public int getDuration() {
+    public int getDurationInGrains() {
         return mDuration;
     }
 
@@ -122,7 +122,7 @@ public class Task {
         List<Equipment> equipment = t.getRequiredEquipment();
 
         int typesOfEquipment = equipment.size();
-        difficulty += t.getDuration();
+        difficulty += t.getDurationInGrains();
         int daysUntilDue = (int) ChronoUnit.DAYS.between(LocalDate.now(), t.getDueDate());
 
         //minimum value is zero so that weird things won't happen when due date in the past

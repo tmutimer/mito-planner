@@ -20,6 +20,9 @@ public class MitoConstraintProvider implements ConstraintProvider {
     @Override
     public Constraint[] defineConstraints(ConstraintFactory factory) {
         return new Constraint[] {
+                scheduleTasks(factory),
+                doNotDoubleBookPerson(factory),
+//                ----------GOOD ABOVE THIS LINE---------
                 doNotExceedRoomCapacity(factory),
                 respectDueDates(factory),
                 // TODO may need to revisit de Smet's advice about implementing alongside other soft constraints.
@@ -29,8 +32,6 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 // TODO fix this
 //                doNotRepeatTasks(factory),
 
-                doNotDoubleBookPerson(factory),
-                scheduleTasks(factory),
                 // TODO we need a totally different approach now
 //                doNotOverbookEquipment(factory),
                 // TODO limits appear to be for  all time, not per week. Not a first fit issue.
@@ -41,6 +42,19 @@ public class MitoConstraintProvider implements ConstraintProvider {
         };
     }
 
+    // Should still work
+    private Constraint scheduleTasks(ConstraintFactory factory) {
+        return factory.from(TaskAssignment.class)
+                .filter(TaskAssignment::isTaskAssigned)
+                .rewardConfigurable("Schedule tasks");
+    }
+
+    // Updated, may work
+    private Constraint doNotDoubleBookPerson(ConstraintFactory factory) {
+        return factory.fromUniquePair(TaskAssignment.class, equal(TaskAssignment::getPerson))
+                .filter((ta, ta2) -> ta.Overlaps(ta2))
+                .penalizeConfigurable("Do not double book people");
+    }
 
     private Constraint doNotExceedRoomCapacity(ConstraintFactory factory) {
         return factory.from(RoomShiftLink.class)
@@ -89,21 +103,9 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 .penalizeConfigurable("Do not repeat tasks");
     }
 
-    private Constraint doNotDoubleBookPerson(ConstraintFactory factory) {
-        return factory.fromUniquePair(TaskAssignment.class, equal(TaskAssignment::getPerson), equal(TaskAssignment::getStartingTimeGrain))
-                .filter((sa, sa2) -> sa.isTaskAssigned() && sa2.isTaskAssigned())
-                .penalizeConfigurable("Do not double book people");
-    }
 
-    private Constraint scheduleTasks(ConstraintFactory factory) {
-        return factory.from(TaskAssignment.class)
-                .filter(TaskAssignment::isTaskAssigned)
-                .rewardConfigurable("Schedule tasks");
-    }
-
-    //TODO figure out to implement preceding tasks.
-    // For the given shift assignment, need to hard penalize if
-    // there doesn't exist a shift assignment with lower planningID (or earlier date) with the preceding task.
+    // Am using a negative version of this constraint, so this is not needed.
+//    To help get the first task in a chain scheduled
 //    private Constraint schedulePrecedingTasks(ConstraintFactory factory) {
 //        return factory.from(ShiftAssignment.class)
 //                .ifNotExists(ShiftAssignment.class, )
@@ -141,7 +143,7 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 .penalizeConfigurable("Shift limit conflict");
     }
 
-    // TODO need to be able to filter for AssignedTasks within the not exists??
+    // This has been updated, may work.
     private Constraint respectPrecedingTasks(ConstraintFactory factory) {
         BiPredicate<TaskAssignment, TaskAssignment> isPrecedingTaskScheduledInThePast =
                 ((taskAssignment, taskAssignment2) -> {

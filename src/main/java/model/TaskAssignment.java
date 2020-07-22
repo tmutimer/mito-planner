@@ -167,6 +167,24 @@ public class TaskAssignment {
     }
 
     public LocalDateTime getEndTime() {
-        return isTaskAssigned() ? getStartTime().plusMinutes(TimeGrain.getMinutesPerTimeGrain() * mTask.getDuration()) : null;
+        return isTaskAssigned() ? getStartTime().plusMinutes(TimeGrain.getMinutesPerTimeGrain() * mTask.getDurationInGrains()) : null;
+    }
+
+    public boolean Overlaps(TaskAssignment other) {
+        if (mStartingTimeGrain == null || other.getStartingTimeGrain() == null) {
+            return false;
+        }
+        // TODO ID is not particularly safe, as TimeGrains must be created in Chronological order.
+        int start = mStartingTimeGrain.getId();
+        int end = start + mTask.getDurationInGrains();
+        int otherStart = other.mStartingTimeGrain.getId();
+        int otherEnd = otherStart + other.getTask().getDurationInGrains();
+
+        if (end < otherStart) {
+            return false;
+        } else if (otherEnd < start) {
+            return false;
+        }
+        return true;
     }
 }
