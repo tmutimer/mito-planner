@@ -61,7 +61,7 @@ public class ScheduleSolution {
         // for small task list
 //        mTaskList = data.getTaskList();
         // for larger randomised data
-        mTaskList = data.generateTaskList(200);
+        mTaskList = data.getTaskList();
         mPersonList = data.getPersonList();
         mPiGroupList = data.getPiGroupList();
         mRoomList = data.getRoomList();
@@ -158,18 +158,17 @@ public class ScheduleSolution {
         mScore = score;
     }
 
+    public List<TimeGrain> getTimeGrainList() {
+        return mTimeGrainList;
+    }
 
     // v COMPLEX METHODS v //
 
     public int getNumberUnassignedTasks() {
         int totalNumTasks = mTaskList.size();
         int totalAssignedTasks = 0;
-        for (Task t : mTaskList) {
-            for (TaskAssignment taskAssignment : mAssignments) {
-                if (taskAssignment.getTask() == t) {
-                    totalAssignedTasks += 1;
-                }
-            }
+        for (TaskAssignment ta : mAssignments) {
+            if (ta.isTaskAssigned()) totalAssignedTasks += 1;
         }
         return totalNumTasks - totalAssignedTasks;
     }

@@ -74,7 +74,7 @@ public class TaskAssignment {
         if (Objects.isNull(mStartingTimeGrain) || Objects.isNull(mTask.getDueDate())) {
             return false;
         }
-        return !mStartingTimeGrain.getStartTime().isBefore(mTask.getDueDate());
+        return mStartingTimeGrain.getStartTime().isAfter(mTask.getDueDate());
     }
 
     public PiGroup getPiGroup() {

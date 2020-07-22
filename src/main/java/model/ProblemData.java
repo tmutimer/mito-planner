@@ -37,9 +37,9 @@ public class ProblemData {
         mPiGroupList = createPiGroupList();
         mEquipmentList = createEquipmentList();
         mPersonList = createPersonList();
-        mTaskList = createTaskList();
         mShiftList = createShiftList();
         mTimeGrainList = createTimeGrainList();
+        mTaskList = generateTaskList(200);
         mTaskAssignmentList = createTaskAssignmentList();
     }
 

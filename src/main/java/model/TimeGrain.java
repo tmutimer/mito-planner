@@ -50,4 +50,9 @@ public class TimeGrain {
     public static int getMinutesPerTimeGrain() {
         return sMinutesPerTimeGrain;
     }
+
+    @Override
+    public String toString() {
+        return getStartTime().toString();
+    }
 }

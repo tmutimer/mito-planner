@@ -4,6 +4,7 @@ import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class Main {
@@ -36,7 +37,17 @@ public class Main {
     }
 
     public static void displaySolution(ScheduleSolution solution) {
+        System.out.println("Assignments:");
         List<TaskAssignment> assignments = solution.getAssignments();
+        assignments.sort(new Comparator<TaskAssignment>() {
+            @Override
+            public int compare(TaskAssignment o1, TaskAssignment o2) {
+                if(o1.isTaskAssigned() && !o2.isTaskAssigned()) return 1;
+                if(!o1.isTaskAssigned() && o2.isTaskAssigned()) return -1;
+                if(!o1.isTaskAssigned() && !o2.isTaskAssigned()) return 0;
+                return o1.getStartTime().compareTo(o2.getStartTime());
+            }
+        });
         int nullCount = 0;
         for (TaskAssignment assignment: assignments) {
             if (assignment.isTaskAssigned()) {
@@ -46,7 +57,7 @@ public class Main {
             }
         }
         System.out.println();
-        System.out.println("Shift assignment slots not used: " + nullCount);
+        System.out.println("Tasks not assigned: " + nullCount);
         System.out.println();
         System.out.println("Assignments per PI Group:");
         solution.printPiGroupSplit();
