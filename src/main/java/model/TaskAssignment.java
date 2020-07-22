@@ -1,5 +1,6 @@
 package model;
 
+import comparators.TaskAssignmentDifficultyWeightFactory;
 import comparators.TaskDifficultyComparator;
 import comparators.TimeslotAssignmentStrengthComparator;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
@@ -20,7 +21,7 @@ import java.util.Objects;
  * Before planning, the task links are null, but the shift links are populated.
  */
 // TODO May need to change this to be a TaskAssignmentDifficultyComparator
-@PlanningEntity(difficultyComparatorClass = TaskDifficultyComparator.class)
+@PlanningEntity(difficultyWeightFactoryClass = TaskAssignmentDifficultyWeightFactory.class)
 public class TaskAssignment {
     //TODO to expose this constant, may need to live in another class
     private static final int TIME_UNTIL_SLOT_DIFFICULTY_WEIGHT = 1;
@@ -186,5 +187,9 @@ public class TaskAssignment {
             return false;
         }
         return true;
+    }
+
+    public boolean hasPrecedingTask() {
+        return Objects.nonNull(getTask().getPrecedingTaskId());
     }
 }

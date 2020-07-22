@@ -1,5 +1,6 @@
 package model;
 
+import javassist.NotFoundException;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.optaplanner.core.api.domain.constraintweight.ConstraintConfigurationProvider;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
@@ -163,6 +164,13 @@ public class ScheduleSolution {
     }
 
     // v COMPLEX METHODS v //
+
+    public Task getTaskForId(int Id) throws NotFoundException {
+        for (Task t : mTaskList) {
+            if (t.getId() == Id) return t;
+        }
+        throw new NotFoundException("No task with that ID");
+    }
 
     public int getNumberUnassignedTasks() {
         int totalNumTasks = mTaskList.size();
