@@ -89,7 +89,7 @@ public class Task {
         return mPrecedingTaskId;
     }
 
-    public boolean isImmediatelyFollowsPrecedingTask() {
+    public boolean immediatelyFollowsPrecedingTask() {
         return mImmediatelyFollowsPrecedingTask;
     }
 
@@ -141,5 +141,9 @@ public class Task {
 
     public boolean hasDueDate() {
         return Objects.nonNull(mDueDate);
+    }
+
+    public boolean hasPrecedingTask() {
+        return Objects.nonNull(getPrecedingTaskId());
     }
 }

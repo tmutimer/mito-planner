@@ -190,6 +190,6 @@ public class TaskAssignment {
     }
 
     public boolean hasPrecedingTask() {
-        return Objects.nonNull(getTask().getPrecedingTaskId());
+        return getTask().hasPrecedingTask();
     }
 }
