@@ -11,5 +11,5 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    implementation 'org.optaplanner:optaplanner-core:7.37.0.Final'
+    implementation 'org.optaplanner:optaplanner-core:7.40.0.Final'
 }

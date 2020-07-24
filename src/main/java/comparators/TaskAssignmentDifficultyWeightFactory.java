@@ -32,6 +32,7 @@ public class TaskAssignmentDifficultyWeightFactory implements SelectionSorterWei
         return precedingTaskCount;
     }
 
+    // This method calculates the difficulty for an assignment, with access to the other problem facts
     private static int calculateDifficulty(ScheduleSolution solution, TaskAssignment selection) {
         // maximum difficulty when the task is at the back of a long queue of successive tasks
         int difficulty = 0;
@@ -51,6 +52,7 @@ public class TaskAssignmentDifficultyWeightFactory implements SelectionSorterWei
     @Override
     public TaskAssignmentDifficultyWeight createSorterWeight(ScheduleSolution scheduleSolution, TaskAssignment selection) {
         int difficulty = calculateDifficulty(scheduleSolution, selection);
+        return new TaskAssignmentDifficultyWeight(selection, difficulty);
     }
 
 
@@ -68,9 +70,17 @@ public class TaskAssignmentDifficultyWeightFactory implements SelectionSorterWei
             mDifficulty = difficulty;
         }
 
+        public int getDifficulty() {
+            return mDifficulty;
+        }
+
+        public int getId() {
+            return mTaskAssignment.getId();
+        }
+
         @Override
-        public int compareTo(TaskAssignmentDifficultyWeight o) {
-            return 0;
+        public int compareTo(TaskAssignmentDifficultyWeight other) {
+            return COMPARATOR.compare(this, other);
         }
     }
 }
