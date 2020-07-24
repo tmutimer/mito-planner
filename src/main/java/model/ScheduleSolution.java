@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -219,8 +220,8 @@ public class ScheduleSolution {
     // v CSV EXPORT METHODS v //
 
     public static String[] assignmentToCsvRow(TaskAssignment assignment) {
-        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        DateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
         String row = null;
 
         LocalDateTime startDate = assignment.getStartingTimeGrain().getStartTime();
