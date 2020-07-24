@@ -1,5 +1,6 @@
 package model;
 
+import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
@@ -18,14 +19,16 @@ public class Main {
 
         Solver<ScheduleSolution> solver = solverFactory.buildSolver();
 
+        ScoreManager<ScheduleSolution> manager = ScoreManager.create(solverFactory);
+
         ScheduleSolution unsolvedSolution = new ScheduleSolution();
 
         ScheduleSolution solvedSolution = solver.solve(unsolvedSolution);
 
         displaySolution(solvedSolution);
 
-        System.out.println(solver.explainBestScore());
         System.out.println();
+        System.out.println(manager.explainScore(solvedSolution));
         System.out.println("Printing constraint match total map");
         System.out.println();
         ScoreDirector<ScheduleSolution> director = solverFactory.getScoreDirectorFactory().buildScoreDirector();

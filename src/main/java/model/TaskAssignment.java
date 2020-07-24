@@ -1,8 +1,8 @@
 package model;
 
 import comparators.TaskAssignmentDifficultyWeightFactory;
-import comparators.TaskDifficultyComparator;
-import comparators.TimeslotAssignmentStrengthComparator;
+import comparators.TimeGrainStrengthComparator;
+import org.apache.commons.lang3.NotImplementedException;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
@@ -48,7 +48,7 @@ public class TaskAssignment {
         return mId;
     }
 
-    @PlanningVariable(valueRangeProviderRefs = {"timeGrainList"}, nullable = true, strengthComparatorClass = TimeslotAssignmentStrengthComparator.class)
+    @PlanningVariable(valueRangeProviderRefs = {"timeGrainList"}, nullable = true, strengthComparatorClass = TimeGrainStrengthComparator.class)
     public TimeGrain getStartingTimeGrain() {
         return mStartingTimeGrain;
     }
@@ -117,14 +117,12 @@ public class TaskAssignment {
         return getTask().getPerson();
     }
 
-
+    // obviously this is broken
     public int getEquipmentUsage(Equipment equipment) {
-//        if(isTaskAssigned()) {
-//            return getTask().getRequiredEquipment().getOrDefault(equipment, 0);
-//        }
-        return 0;
+        throw new NotImplementedException("Not implemented getEquipmentUsage!");
     }
 
+    // THIS IS NOT CURRENTLY USED
     public static int getDifficulty(TaskAssignment sa) {
         int totalDifficulty = 0;
         int daysUntil = (int) ChronoUnit.DAYS.between(LocalDate.now(), sa.getStartingTimeGrain().getStartTime());

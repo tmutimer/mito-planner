@@ -49,11 +49,10 @@ public class ScheduleSolution {
     @ProblemFactCollectionProperty
     private List<Shift> mShiftList;
 
-    //TODO create two ProblemFactCollectionProperty pertaining to the Difficulty and Strength weightings
+    //TODO potentially create two ProblemFactCollectionProperty pertaining to the Difficulty and Strength weightings
 
     @ProblemFactProperty
     private final int mTotalCapacity;
-
 
 
     public ScheduleSolution() throws Exception {
