@@ -225,7 +225,7 @@ public class ScheduleSolution {
         String row = null;
 
         LocalDateTime startDate = assignment.getStartingTimeGrain().getStartTime();
-        LocalDateTime endDate = assignment.getStartingTimeGrain().getEndTime();
+        LocalDateTime endDate = assignment.getEndTime();
 
         String startDateString = dateFormat.format(startDate);
         String startTimeString = timeFormat.format(startDate);

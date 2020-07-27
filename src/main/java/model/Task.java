@@ -21,7 +21,6 @@ public class Task {
     private final List<Equipment> mRequiredEquipment;
     private final int mPriority;
 
-    static final int EQUIPMENT_TIME_DIFFICULTY_WEIGHT = 1;
     static final int EQUIPMENT_TYPE_DIFFICULTY_WEIGHT = 1;
     static final int DUE_DATE_DIFFICULTY_WEIGHT = 2000;
 
