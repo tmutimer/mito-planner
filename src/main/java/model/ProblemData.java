@@ -72,7 +72,7 @@ public class ProblemData {
             int id = ++id_counter;
             Person person = mPersonList.get(random.nextInt(mPersonList.size()));
             String name = "Random Task #X".replace("X", String.valueOf(id));
-            int duration = random.nextInt(12) * 15;
+            int duration = random.nextInt(11)+1;
             List<Equipment> equipmentUsage = new ArrayList<>();
             equipmentUsage.add(mEquipmentList.get(random.nextInt(mEquipmentList.size())));
             //TODO implement due date, precedingtask, and immediately_follows_preceding_task

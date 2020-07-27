@@ -97,6 +97,7 @@ public class Task {
     public String toString() {
         return  "Task name=" + mName +
                 ", Person=" + mPerson +
+                ", Duration=" + mDuration +
                 ", Due Date=" + mDueDate +
                 ", Priority=" + mPriority +
                 ", Preceding Task=" + mPrecedingTaskId;

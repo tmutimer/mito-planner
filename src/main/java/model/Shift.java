@@ -2,6 +2,9 @@ package model;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
+import java.util.Locale;
 
 /**
  * The model.Shift is a half-day slot. This has a fixed relationship to model.ShiftAssignment objects,
@@ -17,6 +20,12 @@ public class Shift {
         mId = ++sIdCounter;
         mStartTime = startTime;
         mEndTime = endTime;
+    }
+
+    public int getWeek() {
+        LocalDateTime date = getStartTime();
+        TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
+        return date.get(woy);
     }
 
     public LocalDateTime getStartTime() {

@@ -35,6 +35,7 @@ public class Main {
         director.setWorkingSolution(solvedSolution);
         System.out.println(director.getConstraintMatchTotalMap());
 
+        // TODO end dates and times will not be correct, as they will go off the first TimeGrain
         solvedSolution.writeAssignmentsToCsv();
 
     }

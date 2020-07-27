@@ -61,6 +61,9 @@ public class TaskAssignment {
         return mStartingTimeGrain.getShift().getId();
     }
 
+    public Shift getShift() {
+        return mStartingTimeGrain.getShift();
+    }
 
     public Task getTask() {
         return mTask;
@@ -90,7 +93,6 @@ public class TaskAssignment {
         TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
         return date.get(woy);
     }
-
 
 
     @Override
@@ -179,9 +181,9 @@ public class TaskAssignment {
         int otherStart = other.mStartingTimeGrain.getId();
         int otherEnd = otherStart + other.getTask().getDurationInGrains();
 
-        if (end < otherStart) {
+        if (end <= otherStart) {
             return false;
-        } else if (otherEnd < start) {
+        } else if (otherEnd <= start) {
             return false;
         }
         return true;
@@ -189,5 +191,9 @@ public class TaskAssignment {
 
     public boolean hasPrecedingTask() {
         return getTask().hasPrecedingTask();
+    }
+
+    public int getPersonId() {
+        return getPerson().getId();
     }
 }
