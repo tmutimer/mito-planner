@@ -18,8 +18,6 @@ import java.util.*;
  * Encapsulates the input data for the problem
  */
 public class ProblemData {
-    // TODO figure out whether to implement this as HashSet,
-    //  may depend how much comparisons are used during planning
     private final int mTotalCapacity;
     private final List<Room> mRoomList;
     private final List<Equipment> mEquipmentList;

@@ -4,8 +4,6 @@ package model;
  * Problem fact class. People have an office they are associated with, but the lab bench is left to the task.
  */
 
-// TODO consider implementing Serializable on all problem fact classes
-//    probably worth doing once there's an actual need to Serialize...
 public class Person {
     private final int mId;
     private final String mName;

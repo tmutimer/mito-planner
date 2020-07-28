@@ -10,8 +10,6 @@ import java.util.List;
 
 public class Main {
     // TODO fix broken constraints
-    // TODO Look into replacing TaskAssignmentDifficultyComparator with TaskAssignmentDifficultyWeightFactory,
-    //     to get access to other tasks (for preceding task concerns). NQueens has example.
     private static final String SOLVER_CONFIG = "mitoScheduleSolver.xml";
 
     public static void main(String[] args) throws Exception {
@@ -35,7 +33,6 @@ public class Main {
         director.setWorkingSolution(solvedSolution);
         System.out.println(director.getConstraintMatchTotalMap());
 
-        // TODO end dates and times will not be correct, as they will go off the first TimeGrain
         solvedSolution.writeAssignmentsToCsv();
 
     }

@@ -26,6 +26,7 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 respectDueDates(factory),
 //                ----------GOOD ABOVE THIS LINE---------
                 doNotExceedRoomCapacity(factory),
+                doNotExceedFloorCapacity(),
                 // TODO we need a totally different approach now
 //                doNotOverbookEquipment(factory),
                 // TODO limits appear to be for  all time, not per week. Not a first fit issue.
@@ -49,11 +50,11 @@ public class MitoConstraintProvider implements ConstraintProvider {
     }
 
     // TODO this is fubar
-    private Constraint doNotExceedRoomCapacity(ConstraintFactory factory) {
-        return factory.from(RoomShiftLink.class)
-                .filter(RoomShiftLink::isRoomOverCapacity)
-                .penalizeConfigurable("Room capacity conflict");
-    }
+//    private Constraint doNotExceedRoomCapacity(ConstraintFactory factory) {
+//        return factory.from(RoomShiftLink.class)
+//                .filter(RoomShiftLink::isRoomOverCapacity)
+//                .penalizeConfigurable("Room capacity conflict");
+//    }
 
 //    private Constraint doNotExceedEquipmentCapacity(ConstraintFactory factory) {
 //        return factory.from(EquipmentTaskLink.class)
@@ -129,6 +130,12 @@ public class MitoConstraintProvider implements ConstraintProvider {
 ////                }))
 //                .penalizeConfigurable("Shift limit conflict");
 //    }
+
+    private Constraint doNotExceedLimit(ConstraintFactory factory) {
+        return factory.from(Shift.class)
+                .join(Person.class)
+                .filter(((shift, person) -> shift.isPersonAssigned(person)));
+    }
 /*
 SELECT p.personId, s.week, count(*)
 FROM
