@@ -24,6 +24,8 @@ public class Main {
         ScheduleSolution solvedSolution = solver.solve(unsolvedSolution);
 
         displaySolution(solvedSolution);
+        System.out.println("Fix this, should expect task assignments to be updated as shadow variable");
+        System.out.println(solvedSolution.getTimeGrainList().get(0).getTaskAssignments());
 
         System.out.println();
         System.out.println(manager.explainScore(solvedSolution));

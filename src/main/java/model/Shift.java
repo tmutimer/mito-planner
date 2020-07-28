@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -14,6 +16,7 @@ public class Shift {
     private final LocalDateTime mStartTime;
     private final LocalDateTime mEndTime;
     private final int mId;
+    private List<TimeGrain> mTimeGrains;
     private static int sIdCounter = 0;
 
     public Shift(LocalDateTime startTime, LocalDateTime endTime) {
@@ -38,6 +41,28 @@ public class Shift {
 
     public int getId() {
         return mId;
+    }
+
+    public List<TimeGrain> getTimeGrains() {
+        return mTimeGrains;
+    }
+
+    public void setTimeGrains(List<TimeGrain> timeGrains) {
+        mTimeGrains = timeGrains;
+    }
+
+    public List<Person> getAssignedPeople() {
+        List<Person> assignedPeople = new ArrayList<>();
+        for (TimeGrain grain : mTimeGrains) {
+            for (TaskAssignment ta: grain.getTaskAssignments()) {
+                assignedPeople.add(ta.getPerson());
+            }
+        }
+        return assignedPeople;
+    }
+
+    public boolean isPersonAssigned(Person person) {
+        return getAssignedPeople().contains(person);
     }
 
     @Override

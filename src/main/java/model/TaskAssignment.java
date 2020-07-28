@@ -34,7 +34,8 @@ public class TaskAssignment {
     private Task mTask;
 
     // The TimeGrain start time is the variable!
-    private TimeGrain mStartingTimeGrain;
+    // used without 'm' because of issue with Inverse Relation Shadow Variable
+    private TimeGrain startingTimeGrain;
 
     public TaskAssignment() {
     }
@@ -50,19 +51,19 @@ public class TaskAssignment {
 
     @PlanningVariable(valueRangeProviderRefs = {"timeGrainList"}, nullable = true, strengthComparatorClass = TimeGrainStrengthComparator.class)
     public TimeGrain getStartingTimeGrain() {
-        return mStartingTimeGrain;
+        return startingTimeGrain;
     }
 
     public void setStartingTimeGrain(TimeGrain startingTimeGrain) {
-        mStartingTimeGrain = startingTimeGrain;
+        this.startingTimeGrain = startingTimeGrain;
     }
 
     public int getShiftId() {
-        return mStartingTimeGrain.getShift().getId();
+        return startingTimeGrain.getShift().getId();
     }
 
     public Shift getShift() {
-        return mStartingTimeGrain.getShift();
+        return startingTimeGrain.getShift();
     }
 
     public Task getTask() {
@@ -75,14 +76,14 @@ public class TaskAssignment {
 
     public boolean hasTaskMissedDueDate() {
 
-        if (Objects.isNull(mStartingTimeGrain) || Objects.isNull(mTask.getDueDate())) {
+        if (Objects.isNull(startingTimeGrain) || Objects.isNull(mTask.getDueDate())) {
             return false;
         }
-        return mStartingTimeGrain.getStartTime().isAfter(mTask.getDueDate());
+        return startingTimeGrain.getStartTime().isAfter(mTask.getDueDate());
     }
 
     public PiGroup getPiGroup() {
-        if (Objects.isNull(mStartingTimeGrain)) {
+        if (Objects.isNull(startingTimeGrain)) {
             return null;
         }
         return mTask.getPerson().getPiGroup();
@@ -97,15 +98,15 @@ public class TaskAssignment {
 
     @Override
     public String toString() {
-        return mStartingTimeGrain + " " + mTask;
+        return startingTimeGrain + " " + mTask;
     }
 
     public boolean isTaskAssigned() {
-        return !Objects.isNull(mStartingTimeGrain);
+        return !Objects.isNull(startingTimeGrain);
     }
 
     public boolean isTaskAssignedWithPrecedingTask() {
-        if (!Objects.isNull(mStartingTimeGrain)) {
+        if (!Objects.isNull(startingTimeGrain)) {
             return !Objects.isNull(mTask.getPrecedingTaskId());
         }
         return false;
@@ -151,7 +152,7 @@ public class TaskAssignment {
     }
 
     public LocalDateTime getShiftTime() {
-        if (Objects.nonNull(mStartingTimeGrain)) {
+        if (Objects.nonNull(startingTimeGrain)) {
             return getStartingTimeGrain().getStartTime();
         }
         return null;
@@ -164,7 +165,7 @@ public class TaskAssignment {
 
     // TODO Find out if this is bad practice?
     public LocalDateTime getStartTime() {
-        return isTaskAssigned() ? mStartingTimeGrain.getStartTime() : null;
+        return isTaskAssigned() ? startingTimeGrain.getStartTime() : null;
     }
 
     public LocalDateTime getEndTime() {
@@ -172,13 +173,13 @@ public class TaskAssignment {
     }
 
     public boolean Overlaps(TaskAssignment other) {
-        if (mStartingTimeGrain == null || other.getStartingTimeGrain() == null) {
+        if (startingTimeGrain == null || other.getStartingTimeGrain() == null) {
             return false;
         }
         // TODO ID is not particularly safe, as TimeGrains must be created in Chronological order.
-        int start = mStartingTimeGrain.getId();
+        int start = startingTimeGrain.getId();
         int end = start + mTask.getDurationInGrains();
-        int otherStart = other.mStartingTimeGrain.getId();
+        int otherStart = other.startingTimeGrain.getId();
         int otherEnd = otherStart + other.getTask().getDurationInGrains();
 
         if (end <= otherStart) {

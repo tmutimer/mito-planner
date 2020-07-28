@@ -9,8 +9,7 @@ import org.optaplanner.core.api.score.stream.Joiners;
 
 import java.util.function.*;
 
-import static org.optaplanner.core.api.score.stream.ConstraintCollectors.count;
-import static org.optaplanner.core.api.score.stream.ConstraintCollectors.sum;
+import static org.optaplanner.core.api.score.stream.ConstraintCollectors.*;
 import static org.optaplanner.core.api.score.stream.Joiners.*;
 
 public class MitoConstraintProvider implements ConstraintProvider {
@@ -25,8 +24,8 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 scheduleTasksWithDueDates(factory),
                 respectDueDates(factory),
 //                ----------GOOD ABOVE THIS LINE---------
-                doNotExceedRoomCapacity(factory),
-                doNotExceedFloorCapacity(),
+                doNotExceedFloorCapacity(factory),
+//                doNotExceedRoomCapacity(factory),
                 // TODO we need a totally different approach now
 //                doNotOverbookEquipment(factory),
                 // TODO limits appear to be for  all time, not per week. Not a first fit issue.
@@ -131,10 +130,14 @@ public class MitoConstraintProvider implements ConstraintProvider {
 //                .penalizeConfigurable("Shift limit conflict");
 //    }
 
-    private Constraint doNotExceedLimit(ConstraintFactory factory) {
+    private Constraint doNotExceedFloorCapacity(ConstraintFactory factory) {
         return factory.from(Shift.class)
                 .join(Person.class)
-                .filter(((shift, person) -> shift.isPersonAssigned(person)));
+                .filter(((shift, person) -> shift.isPersonAssigned(person)))
+                .groupBy(((shift, person) -> shift), countBi())
+                // TODO this lambda never seems to get run, meaning constraint isn't working
+                .filter(((shift, integer) -> integer > 40))
+                .penalizeConfigurable("Floor capacity conflict");
     }
 /*
 SELECT p.personId, s.week, count(*)

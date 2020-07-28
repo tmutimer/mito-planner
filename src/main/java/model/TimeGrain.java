@@ -1,24 +1,35 @@
 package model;
 
+import org.optaplanner.core.api.domain.entity.PlanningEntity;
+import org.optaplanner.core.api.domain.variable.InverseRelationShadowVariable;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+@PlanningEntity
 public class TimeGrain {
     private int mId;
     private static int sIdCounter = 0;
     private LocalDateTime mStartTime;
     private LocalDateTime mEndTime;
     private Shift mShift;
+    private List<TaskAssignment> mTaskAssignments;
     private static final int sMinutesPerTimeGrain = 15;
+
+    // public constructor for planning clone creation
+    public TimeGrain() {
+
+    }
 
     public TimeGrain(LocalDateTime startTime, LocalDateTime endTime, Shift shift) {
         mId = ++sIdCounter;
         mStartTime = startTime;
         mEndTime = endTime;
         mShift = shift;
+        mTaskAssignments = new ArrayList<>();
     }
 
     public static List<TimeGrain> fromShift(Shift shift) {
@@ -48,6 +59,14 @@ public class TimeGrain {
         return mShift;
     }
 
+    @InverseRelationShadowVariable(sourceVariableName = "startingTimeGrain")
+    public List<TaskAssignment> getTaskAssignments() {
+        return mTaskAssignments;
+    }
+
+    public void setTaskAssignments(List<TaskAssignment> mTaskAssignments) {
+        this.mTaskAssignments = mTaskAssignments;
+    }
 
     public static int getMinutesPerTimeGrain() {
         return sMinutesPerTimeGrain;

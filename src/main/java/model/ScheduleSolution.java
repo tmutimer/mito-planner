@@ -71,6 +71,17 @@ public class ScheduleSolution {
         mTimeGrainList = data.getTimeGrainList();
         mAssignments = data.getTaskAssignmentList();
         mConstraintConfiguration = new MitoConstraintConfiguration();
+        createShiftTimeGrainLinks();
+    }
+
+    private void createShiftTimeGrainLinks() {
+        for (Shift s : mShiftList) {
+            ArrayList<TimeGrain> shiftTimeGrains = new ArrayList<>();
+            for (TimeGrain t : mTimeGrainList) {
+                if (t.getShift() == s) shiftTimeGrains.add(t);
+            }
+            s.setTimeGrains(shiftTimeGrains);
+        }
     }
 
 
