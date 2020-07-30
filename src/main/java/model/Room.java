@@ -3,7 +3,7 @@ package model;
 import java.util.Objects;
 
 /**
- * Problem fact class. A room on the 4th floor. Includes both offices and lab rooms. Each has a capacity.
+ * A room on the 4th floor. Includes both offices and lab rooms.
  */
 public class Room {
     private final int mId;

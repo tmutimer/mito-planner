@@ -14,6 +14,8 @@
         <constraintProviderClass>solver.MitoConstraintProvider</constraintProviderClass>
     </scoreDirectorFactory>
 
+<!-- Before employing local search heuristics, firstly need to create a starting point.
+First fit decreasing/increasing etc may be better than FIRST_FIT-->
     <constructionHeuristic>
         <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
     </constructionHeuristic>
@@ -28,9 +30,10 @@
 <!--        </forager>-->
     </localSearch>
 
+<!--    Termination options-->
     <termination>
-        <secondsSpentLimit>10</secondsSpentLimit>
-<!--        <unimprovedSpentLimit>PT1M</unimprovedSpentLimit>-->
+        <secondsSpentLimit>300</secondsSpentLimit>
+        <unimprovedSpentLimit>PT1M</unimprovedSpentLimit>
     </termination>
 
 </solver>

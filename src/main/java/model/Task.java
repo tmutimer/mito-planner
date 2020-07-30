@@ -7,7 +7,8 @@ import java.util.*;
 
 
 /**
- * Problem fact class. Tasks include all their resource requirements, including the model.Person.
+ * A unit of work with one specific set of requirements (equipment, person, time etc).
+ * A person will typically have several tasks within one shift.
  */
 public class Task {
     private final int mId;
@@ -37,6 +38,10 @@ public class Task {
         mName = name;
         mDueDate = dueDate;
         mRequiredRooms = rooms;
+        // TODO Maybe specific equipment instance should be fitted into the existing required rooms where possible.
+        //  Then all Rooms associated with piece of equipment should be added to mRequiredRooms,
+        //  if they aren't already.
+        // TODO The equipment/rooms should include the office desk/office
         mRequiredEquipment = equipment;
         mPriority = priority;
     }

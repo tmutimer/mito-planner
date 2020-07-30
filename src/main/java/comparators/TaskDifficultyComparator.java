@@ -5,7 +5,9 @@ import model.Task;
 import java.io.Serializable;
 import java.util.Comparator;
 
-// At the moment this is not used, as Task is not a Planning Entity, but a Problem Fact
+/**
+ * No longer used (in favour of TaskAssignmentDifficultyWeightFactory). Can probably be deleted.
+ */
 public class TaskDifficultyComparator implements Comparator<Task>, Serializable {
 
     private static final Comparator<Task> COMPARATOR = Comparator.comparingInt(Task::getDifficulty)

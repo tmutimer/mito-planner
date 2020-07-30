@@ -10,8 +10,20 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 
+/**
+ * Allows determining the planning difficulty of TaskAssignments,
+ * while accessing the rest of the problem facts, notably the other TaskAssignments.
+ */
 public class TaskAssignmentDifficultyWeightFactory implements SelectionSorterWeightFactory<ScheduleSolution, TaskAssignment> {
 
+    // using a difficulty weight factory instead of simpler difficulty comparator so that we can access all the problem facts
+
+    /**
+     * Calculates the number of tasks that precede the input taskRecursive in a chain.
+     * @param solution
+     * @param taskRecursive is the *last* task in the chain
+     * @return int: the number of tasks preceding taskRecursive, in a chain
+     */
     private static int getNumPrecedingTasks(ScheduleSolution solution, Task taskRecursive) {
         int precedingTaskCount = 0;
         //while there's a preceding task to taskRecursive
@@ -32,10 +44,11 @@ public class TaskAssignmentDifficultyWeightFactory implements SelectionSorterWei
         return precedingTaskCount;
     }
 
-    // This method calculates the difficulty for an assignment, with access to the other problem facts
+    /**
+     * This method calculates the difficulty for an assignment, with access to the other problem facts
+     */
     private static int calculateDifficulty(ScheduleSolution solution, TaskAssignment selection) {
         // maximum difficulty when the task is at the back of a long queue of successive tasks
-        int difficulty = 0;
         Task task = selection.getTask();
         int precedingTaskCount = getNumPrecedingTasks(solution, task);
 

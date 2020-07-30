@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Problem fact. People belong to PI Groups.
+ * People belong to PI Groups.
  */
 public class PiGroup {
     private final String mName;

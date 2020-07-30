@@ -1,12 +1,9 @@
 package solver;
 
 import model.*;
-import org.optaplanner.core.api.function.TriPredicate;
 import org.optaplanner.core.api.score.stream.Constraint;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
-import org.optaplanner.core.api.score.stream.Joiners;
-
 import java.util.function.*;
 
 import static org.optaplanner.core.api.score.stream.ConstraintCollectors.*;
@@ -19,48 +16,54 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 scheduleTasks(factory),
                 doNotDoubleBookPerson(factory),
                 schedulePiGroupsFairly(factory),
-                // TODO may need to revisit de Smet's advice about implementing alongside other soft constraints.
+                //TODO may need to revisit de Smet's advice about implementing alongside other soft constraints.
+                // (bit.ly/3f9RcSV)
                 scheduleHighPriorityTasks(factory),
                 scheduleTasksWithDueDates(factory),
                 respectDueDates(factory),
-//                ----------GOOD ABOVE THIS LINE---------
                 doNotExceedFloorCapacity(factory),
+
+//                ----------(PROBABLY) GOOD ABOVE THIS LINE---------
 //                doNotExceedRoomCapacity(factory),
-                // TODO we need a totally different approach now
+                // TODO Need a totally different approach now for equipment
 //                doNotOverbookEquipment(factory),
                 // TODO limits appear to be for  all time, not per week. Not a first fit issue.
 //                doNotExceedLimit(factory),
                 respectPrecedingTasks(factory)
+                // TODO implement any other required constraints
         };
     }
 
-    // Should still work
     private Constraint scheduleTasks(ConstraintFactory factory) {
         return factory.from(TaskAssignment.class)
                 .filter(TaskAssignment::isTaskAssigned)
                 .rewardConfigurable("Schedule tasks");
     }
 
-    // Updated, may work
     private Constraint doNotDoubleBookPerson(ConstraintFactory factory) {
         return factory.fromUniquePair(TaskAssignment.class, equal(TaskAssignment::getPerson))
-                .filter((ta, ta2) -> ta.Overlaps(ta2))
+                .filter(TaskAssignment::Overlaps)
                 .penalizeConfigurable("Do not double book people");
     }
 
-    // TODO this is fubar
-//    private Constraint doNotExceedRoomCapacity(ConstraintFactory factory) {
-//        return factory.from(RoomShiftLink.class)
-//                .filter(RoomShiftLink::isRoomOverCapacity)
-//                .penalizeConfigurable("Room capacity conflict");
-//    }
+    private Constraint schedulePiGroupsFairly(ConstraintFactory factory) {
+        ToIntBiFunction<PiGroup, Integer> getCountSquared = (piGroup, count) -> count * count;
+        return factory.from(TaskAssignment.class)
+                .filter(TaskAssignment::isTaskAssigned)
+                .groupBy(TaskAssignment::getPiGroup, count())
+                .penalizeConfigurable("PI group unfairness", getCountSquared);
+    }
 
-//    private Constraint doNotExceedEquipmentCapacity(ConstraintFactory factory) {
-//        return factory.from(EquipmentTaskLink.class)
-//                .filter(EquipmentTaskLink::isEquipmentOverCapacity)
-//                .penalizeConfigurable("Equipment conflict");
-//    }
+    private Constraint scheduleHighPriorityTasks(ConstraintFactory factory) {
+        ToIntFunction<TaskAssignment> getPriority = (taskAssignment) -> taskAssignment.getTask().getPriority();
 
+        return factory.from(TaskAssignment.class)
+                .filter(TaskAssignment::isTaskAssigned)
+                .rewardConfigurable("High priority work done", getPriority);
+    }
+
+    // Have this positive constraint as well as the negative constraint, because otherwise the solver
+    // tends to not bother with scheduling tasks with due dates at all. Unsure if this is good practice...
     private Constraint scheduleTasksWithDueDates(ConstraintFactory factory) {
         return factory.from(TaskAssignment.class)
                 .filter(TaskAssignment::isTaskAssignedWithDueDate)
@@ -73,31 +76,49 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 .penalizeConfigurable("Due date conflict");
     }
 
-    private Constraint scheduleHighPriorityTasks(ConstraintFactory factory) {
-        ToIntFunction<TaskAssignment> getPriority = (taskAssignment) -> taskAssignment.getTask().getPriority();
 
+    // TODO the hard-coded 40 is a bad idea. Should instead grab ProblemData.getTotalCapacity()
+    private Constraint doNotExceedFloorCapacity(ConstraintFactory factory) {
         return factory.from(TaskAssignment.class)
                 .filter(TaskAssignment::isTaskAssigned)
-                .rewardConfigurable("High priority work done", getPriority);
+                .join(Shift.class)
+                .filter(((taskAssignment, shift) -> taskAssignment.getShift() == shift))
+                .groupBy(((taskAssignment, shift) -> shift))
+                .join(Person.class)
+                .filter((Shift::isPersonAssigned))
+                .groupBy(((shift, person) -> shift), countBi())
+                .filter(((shift, integer) -> integer > 40))
+                .penalizeConfigurable("Floor capacity conflict");
     }
 
-    private Constraint schedulePiGroupsFairly(ConstraintFactory factory) {
-        ToIntBiFunction<PiGroup, Integer> getCountSquared = (piGroup, count) -> count * count;
+    /// BELOW HERE IS MOSTLY BROKEN GARBAGE THAT NEEDS TO BE FIXED OR REPLACED ///
+
+    // TODO fix this by filtering correctly.
+    private Constraint bookImmediatelySubsequentTasks(ConstraintFactory factory) {
         return factory.from(TaskAssignment.class)
                 .filter(TaskAssignment::isTaskAssigned)
-                .groupBy(TaskAssignment::getPiGroup, count())
-                .penalizeConfigurable("PI group unfairness", getCountSquared);
+                .filter(TaskAssignment::hasPrecedingTask)
+                // TODO filter for it being scheduled immediately following it's preceding task
+                .penalizeConfigurable("Immediately preceding task conflict");
     }
 
+    // TODO these probably need to be entirely re-done
+//    private Constraint doNotExceedRoomCapacity(ConstraintFactory factory) {
+//        return factory.from(RoomShiftLink.class)
 
-    // Am using a negative version of this constraint, so this is not needed.
-//    To help get the first task in a chain scheduled
-//    private Constraint schedulePrecedingTasks(ConstraintFactory factory) {
-//        return factory.from(ShiftAssignment.class)
-//                .ifNotExists(ShiftAssignment.class, )
+//                .filter(RoomShiftLink::isRoomOverCapacity)
+//                .penalizeConfigurable("Room capacity conflict");
 //    }
+//    private Constraint doNotExceedEquipmentCapacity(ConstraintFactory factory) {
+//        return factory.from(EquipmentTaskLink.class)
 
+//                .filter(EquipmentTaskLink::isEquipmentOverCapacity)
+
+//                .penalizeConfigurable("Equipment conflict");
+
+//    }
     // TODO this will need to be totally reworked
+
     private Constraint doNotOverbookEquipment(ConstraintFactory factory) {
         return factory.from(TaskAssignment.class)
                 .join(Shift.class, equal(TaskAssignment::getShiftId, Shift::getId))
@@ -111,7 +132,6 @@ public class MitoConstraintProvider implements ConstraintProvider {
                 })
                 .penalizeConfigurable("Equipment conflict");
     }
-
     // TODO this is broken - will currently do TimeGrain limit, not Shift limit
 //    private Constraint doNotExceedLimit(ConstraintFactory factory) {
 //        TriPredicate<Person, Integer, Integer> exceedsLimit = ((person, week, shiftCount) -> shiftCount > person.getWeeklyShiftLimit());
@@ -128,18 +148,10 @@ public class MitoConstraintProvider implements ConstraintProvider {
 ////                    return integer2 > person.getWeeklyShiftLimit();
 ////                }))
 //                .penalizeConfigurable("Shift limit conflict");
-//    }
 
-    private Constraint doNotExceedFloorCapacity(ConstraintFactory factory) {
-        return factory.from(Shift.class)
-                .join(Person.class)
-                .filter(((shift, person) -> shift.isPersonAssigned(person)))
-                .groupBy(((shift, person) -> shift), countBi())
-                // TODO this lambda never seems to get run, meaning constraint isn't working
-                .filter(((shift, integer) -> integer > 40))
-                .penalizeConfigurable("Floor capacity conflict");
-    }
+//    }
 /*
+This would basically be the SQL equivalent:
 SELECT p.personId, s.week, count(*)
 FROM
 	(SELECT DISTINCT p.personId, s.shiftId
@@ -150,14 +162,14 @@ FROM
          ON ta.shiftId = s.shiftId)
 GROUP BY p.personId, s.week
 */
-    //TODO make this work.
+    //TODO make this work, potentially following the structure of the above SQL
 //    private Constraint doNotExceedLimit(ConstraintFactory factory) {
 //        return factory.from(TaskAssignment.class)
 //                .groupBy(TaskAssignment::getPerson, TaskAssignment::getShift)
 //                .groupBy();
 //    }
 
-    // This has been updated, may work.
+    // This has been updated, may potentially work.
     private Constraint respectPrecedingTasks(ConstraintFactory factory) {
         BiPredicate<TaskAssignment, TaskAssignment> isPrecedingTaskScheduledInThePast =
                 ((taskAssignment, taskAssignment2) -> {

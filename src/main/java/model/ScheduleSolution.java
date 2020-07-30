@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Contains the solution, which is a list of completed ShiftAssignments.
+ * Contains the instances of all the relevant classes in the model, making up a solution (which can be solved or unsolved).
  */
 @PlanningSolution
 public class ScheduleSolution {
@@ -85,10 +85,8 @@ public class ScheduleSolution {
     }
 
 
-    // TODO to improve performance, can calculate a 'Cached Problem Fact Collection' of which Tasks definitely conflict,
-    //   for example, any combination of Tasks done by the same person or Tasks which require use of
-    //   the same unique piece of equipment. May need to have a second look at the issues with hard-coding
-    //   hard constraints (need to be broken to escape local optima).
+    // TODO To improve performance, could calculate a 'Cached Problem Fact Collection' of which Tasks definitely conflict,
+    //   for example Tasks which require use of the same unique piece of equipment.
 
     // This score allows for hard and soft constraints (no medium).
     @PlanningScore

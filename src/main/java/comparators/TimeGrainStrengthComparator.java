@@ -5,6 +5,9 @@ import model.TimeGrain;
 import java.io.Serializable;
 import java.util.Comparator;
 
+/**
+ * Compares the planning strength of TimeGrains
+ */
 public class TimeGrainStrengthComparator implements Comparator<TimeGrain>, Serializable {
 
     private static final Comparator<TimeGrain> COMPARATOR = Comparator.comparingInt(TimeGrain::getStrength)

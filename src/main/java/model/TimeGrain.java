@@ -9,6 +9,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A specific period of time, with a uniform duration across all instances.
+ */
+
+// Planning Entity class, because of the Shadow Variable implemented for
 @PlanningEntity
 public class TimeGrain {
     private int mId;

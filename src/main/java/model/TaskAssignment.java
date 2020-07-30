@@ -16,9 +16,9 @@ import java.util.Locale;
 import java.util.Objects;
 
 /**
- * Planning entity class. ShiftAssignments are linked to Tasks during planning.
- * There are as many model.ShiftAssignment instances per model.Shift instance as the Floor capacity.
- * Before planning, the task links are null, but the shift links are populated.
+ * Planning entity class. TaskAssignments are linked to TimeGrains during planning.
+ * In the solution, there are as many TaskAssignment instances as there are Tasks.
+ * Before planning, the TimeGrain links (the planning variable) are null, but the Task links are populated.
  */
 // TODO May need to change this to be a TaskAssignmentDifficultyComparator
 @PlanningEntity(difficultyWeightFactoryClass = TaskAssignmentDifficultyWeightFactory.class)

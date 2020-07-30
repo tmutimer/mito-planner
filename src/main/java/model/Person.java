@@ -4,6 +4,9 @@ package model;
  * Problem fact class. People have an office they are associated with, but the lab bench is left to the task.
  */
 
+/**
+ * A staff member of the group.
+ */
 public class Person {
     private final int mId;
     private final String mName;

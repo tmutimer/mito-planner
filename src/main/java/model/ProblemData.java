@@ -15,7 +15,8 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 
 /**
- * Encapsulates the input data for the problem
+ * Encapsulates the input data for the planning problem, and provides methods for collecting this data,
+ * both by reading csv files, and generating stochastically (for testing purposes).
  */
 public class ProblemData {
     private final int mTotalCapacity;
@@ -30,14 +31,16 @@ public class ProblemData {
 
     public ProblemData() throws Exception {
         // TODO make total capacity dynamic from the appropriate csv - maybe there should be a settings.txt file.
-        mTotalCapacity = 50;
+        mTotalCapacity = 40;
         mRoomList = createRoomList();
         mPiGroupList = createPiGroupList();
         mEquipmentList = createEquipmentList();
         mPersonList = createPersonList();
         mShiftList = createShiftList();
         mTimeGrainList = createTimeGrainList();
+        // Can switch between the following two lines to either generate tasks or read them in from a file.
         mTaskList = generateTaskList(200);
+//        mTaskList = createTaskList();
         mTaskAssignmentList = createTaskAssignmentList();
     }
 

@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Each instance represents a type of equipment in a given room
+ * A resource like a PCR machine, or an Office Desk.
  */
 public class Equipment {
     private final int mId;
@@ -11,7 +11,8 @@ public class Equipment {
     private final Room mRoom;
 
     // Number of pieces of equipment of the type (and model.Room associated).
-    // TODO this might need to change depending on how input data is collected.
+    // TODO Figure out how to deal with multiple of the same equipment in the same room
+    //  Should they just be separate instances? How to distinguish/select in planning?
     private final int mNumberOfEquipment;
 
     public Equipment(int id, String name, Room room, int numberOfEquipment) {
